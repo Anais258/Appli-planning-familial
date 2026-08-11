@@ -1,0 +1,140 @@
+// Rythmo API data model. Postgres (see DATABASE_URL) — a managed instance
+// like Neon works well for a free-tier deploy (see app/server/README-deploy.md).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  initials     String
+  createdAt    DateTime @default(now())
+
+  members       FamilyMember[]
+  tasks         Task[]
+  notifications Notification[]
+  constraints   Constraints?
+  shareLink     ShareLink?
+  sharedWith    SharedPerson[]
+  calendarConnections CalendarConnection[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// tint: 'accent' | 'neutral' | 'accent2' — matches the Nocturne avatar tint roles
+model FamilyMember {
+  id       String  @id @default(cuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  initials String
+  tint     String  @default("neutral")
+  age      Int?
+  order    Int     @default(0)
+
+  tasks TaskMember[]
+}
+
+// priority: 'high' | 'medium' | 'low'
+model Task {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  category    String
+  date        DateTime
+  weekday     Int
+  time        String
+  duration    Int       @default(30)
+  priority    String    @default("medium")
+  deadlineWeekday Int?
+  recurring   Boolean   @default(false)
+  flexible    Boolean   @default(false)
+  synced      Boolean   @default(false)
+  notes       String    @default("")
+  externalEventId    String?
+  externalProvider   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  members TaskMember[]
+}
+
+model TaskMember {
+  taskId   String
+  task     Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  memberId String
+  member   FamilyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, memberId])
+}
+
+model Constraints {
+  id         String @id @default(cuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sleepStart String @default("20:00")
+  sleepEnd   String @default("07:00")
+  lunchStart String @default("12:00")
+  lunchEnd   String @default("13:30")
+  dndStart   String @default("20:00")
+  dndEnd     String @default("22:00")
+}
+
+// group derived from createdAt at read time ('today' | 'week')
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  unread    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model ShareLink {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token  String @unique
+}
+
+model SharedPerson {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name   String
+  role   String @default("Invité")
+}
+
+// provider: 'google' | 'outlook' | 'apple'
+// Apple has no server-held tokens (device EventKit sync is client-side) — a
+// connection row is still written with provider='apple' so /calendar/status
+// reports it consistently, but accessToken/refreshToken stay null for it.
+model CalendarConnection {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     String
+  email        String?
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@unique([userId, provider])
+}
