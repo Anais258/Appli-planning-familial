@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Passerelle",
+    "slug": "passerelle",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "passerelle",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.passerelle.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#121316",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "app.passerelle.mobile"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "Passerelle a besoin d'accéder à votre calendrier pour synchroniser vos tâches.",
+          "writeOnlyAccess": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#121316",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
