@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-411c5e71-9591-4622-b79a-efafc7cbe2ae/styles.css">
+<script src="_ds/nocturne-411c5e71-9591-4622-b79a-efafc7cbe2ae/_ds_bundle.js"></script>
+<style>body{margin:0}</style>
+</helmet>
+<div style="min-height:100vh;background:var(--color-bg);display:flex;flex-direction:column;align-items:center;gap:26px;padding:36px 20px 60px;font-family:var(--font-body);color:var(--color-text);box-sizing:border-box;">
+  <div style="display:flex;align-items:center;justify-content:space-between;width:100%;max-width:900px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:26px;height:26px;border-radius:7px;background:var(--color-accent-800);color:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:600;font-size:12px;">R</div>
+      <span style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:14px;color:var(--color-neutral-300);">Rythmo — prototype</span>
+    </div>
+    <div class="seg">
+      <label class="seg-opt"><input type="radio" name="platform" checked="{{ isIOS }}" onChange="{{ selectIOS }}"/>iOS</label>
+      <label class="seg-opt"><input type="radio" name="platform" checked="{{ isAndroid }}" onChange="{{ selectAndroid }}"/>Android</label>
+    </div>
+  </div>
+
+  <sc-if value="{{ isIOS }}" hint-placeholder-val="{{ true }}">
+    <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+      <dc-import name="Rythmo Screens" platform="{{ platform }}" screen="{{ screen }}" go-to="{{ goTo }}" go-back="{{ goBack }}" habits="{{ habits }}" toggle-habit="{{ toggleHabit }}" notif-opt-in="{{ notifOptIn }}" set-notif-opt-in="{{ setNotifOptIn }}" members="{{ members }}" tasks="{{ tasks }}" add-task="{{ addTask }}" update-task="{{ updateTask }}" delete-task="{{ deleteTask }}" detail-task-id="{{ detailTaskId }}" editing-task-id="{{ editingTaskId }}" prefill-title="{{ prefillTitle }}" notifications="{{ notifications }}" mark-notif-read="{{ markNotifRead }}" mark-all-read="{{ markAllRead }}" constraints="{{ constraints }}" set-constraint="{{ setConstraint }}" calendar-connected="{{ calendarConnected }}" calendar-email="{{ calendarEmail }}" connect-calendar="{{ connectCalendar }}" disconnect-calendar="{{ disconnectCalendar }}" share-link="{{ shareLink }}" shared-with="{{ sharedWith }}" add-shared-person="{{ addSharedPerson }}" remove-shared-person="{{ removeSharedPerson }}" hint-size="100%,100%"></dc-import>
+    </x-import>
+  </sc-if>
+  <sc-if value="{{ isAndroid }}" hint-placeholder-val="{{ false }}">
+    <x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" dark="{{ true }}" hint-size="412px,892px">
+      <dc-import name="Rythmo Screens" platform="{{ platform }}" screen="{{ screen }}" go-to="{{ goTo }}" go-back="{{ goBack }}" habits="{{ habits }}" toggle-habit="{{ toggleHabit }}" notif-opt-in="{{ notifOptIn }}" set-notif-opt-in="{{ setNotifOptIn }}" members="{{ members }}" tasks="{{ tasks }}" add-task="{{ addTask }}" update-task="{{ updateTask }}" delete-task="{{ deleteTask }}" detail-task-id="{{ detailTaskId }}" editing-task-id="{{ editingTaskId }}" prefill-title="{{ prefillTitle }}" notifications="{{ notifications }}" mark-notif-read="{{ markNotifRead }}" mark-all-read="{{ markAllRead }}" constraints="{{ constraints }}" set-constraint="{{ setConstraint }}" calendar-connected="{{ calendarConnected }}" calendar-email="{{ calendarEmail }}" connect-calendar="{{ connectCalendar }}" disconnect-calendar="{{ disconnectCalendar }}" share-link="{{ shareLink }}" shared-with="{{ sharedWith }}" add-shared-person="{{ addSharedPerson }}" remove-shared-person="{{ removeSharedPerson }}" hint-size="100%,100%"></dc-import>
+    </x-import>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    platform: 'ios',
+    screen: 'onboarding1',
+    history: [],
+    detailTaskId: null,
+    editingTaskId: null,
+    prefillTitle: '',
+    habits: [],
+    notifOptIn: null,
+    constraints: { sleepStart: '20:00', sleepEnd: '07:00', lunchStart: '12:00', lunchEnd: '13:30', dndStart: '20:00', dndEnd: '22:00' },
+    calendarConnected: null,
+    calendarEmail: 'claire.dubois@gmail.com',
+    shareLink: 'rythmo.app/s/f3k9x2',
+    sharedWith: [{ name: 'Marc', role: 'Co-parent' }],
+    members: [
+      { id: 'claire', name: 'Claire', initials: 'CL', tint: 'accent', age: 38 },
+      { id: 'leo', name: 'Léo', initials: 'LÉ', tint: 'neutral', age: 11 },
+      { id: 'emma', name: 'Emma', initials: 'EM', tint: 'accent2', age: 5 },
+      { id: 'odette', name: 'Odette', initials: 'OD', tint: 'neutral', age: 74 },
+    ],
+    tasks: [
+      { id: 1, day: 'Lun', time: '07:30', title: 'Préparer les cartables', category: 'Maison', members: ['claire'], recurring: true, notes: '', duration: 15, priority: 'medium' },
+      { id: 2, day: 'Lun', time: '08:15', title: 'Dépose école — Léo & Emma', category: 'École', members: ['claire'], recurring: true, notes: '', duration: 20, priority: 'medium' },
+      { id: 3, day: 'Lun', time: '17:00', title: 'Devoirs de Léo', category: 'École', members: ['leo'], recurring: true, notes: 'Maths et lecture, environ 30 minutes.', duration: 30, priority: 'high' },
+      { id: 4, day: 'Mar', time: '09:00', title: 'Réunion équipe', category: 'Travail', members: ['claire'], recurring: false, notes: '', duration: 60, priority: 'high' },
+      { id: 5, day: 'Mar', time: '18:00', title: 'Cours de piano — Emma', category: 'Loisirs', members: ['emma'], recurring: true, notes: '', duration: 45, priority: 'low' },
+      { id: 6, day: 'Mer', time: '12:30', title: 'Rendez-vous pédiatre', category: 'Santé', members: ['emma', 'claire'], recurring: false, notes: 'Contrôle annuel, cabinet du Dr Nguyen.', duration: 30, priority: 'medium' },
+      { id: 7, day: 'Jeu', time: '19:00', title: 'Courses de la semaine', category: 'Maison', members: ['claire'], recurring: true, notes: '', duration: 45, priority: 'low' },
+      { id: 8, day: 'Ven', time: '16:30', title: 'Entraînement de foot — Léo', category: 'Loisirs', members: ['leo'], recurring: true, notes: '', duration: 60, priority: 'low' },
+      { id: 9, day: 'Sam', time: '10:00', title: 'Ménage du week-end', category: 'Maison', members: ['claire', 'leo', 'emma'], recurring: true, notes: '', duration: 60, priority: 'medium' },
+      { id: 10, day: 'Dim', time: '11:00', title: 'Déjeuner en famille', category: 'Loisirs', members: ['claire', 'leo', 'emma'], recurring: true, notes: '', duration: 60, priority: 'low' },
+    ],
+    notifications: [
+      { id: 1, title: 'Devoirs de Léo à 17:00 aujourd\u2019hui', time: 'Il y a 5 min', unread: true, group: 'today' },
+      { id: 2, title: 'Rappel : réunion équipe demain à 9h00', time: 'Il y a 2h', unread: true, group: 'today' },
+      { id: 3, title: 'Emma a un rendez-vous pédiatre mercredi', time: 'Hier', unread: false, group: 'week' },
+      { id: 4, title: 'Routine du week-end ajoutée à votre planning', time: 'Lundi', unread: false, group: 'week' },
+    ],
+    nextTaskId: 11,
+  };
+
+  goTo = (screen, extra = {}) => {
+    this.setState(s => ({
+      history: [...s.history, { screen: s.screen, detailTaskId: s.detailTaskId, editingTaskId: s.editingTaskId }],
+      screen,
+      detailTaskId: extra.detailTaskId ?? null,
+      editingTaskId: extra.editingTaskId ?? null,
+      prefillTitle: extra.prefillTitle ?? '',
+    }));
+  };
+  goBack = () => {
+    this.setState(s => {
+      if (!s.history.length) return null;
+      const prev = s.history[s.history.length - 1];
+      return { history: s.history.slice(0, -1), screen: prev.screen, detailTaskId: prev.detailTaskId, editingTaskId: prev.editingTaskId };
+    });
+  };
+  toggleHabit = (h) => this.setState(s => ({ habits: s.habits.includes(h) ? s.habits.filter(x => x !== h) : [...s.habits, h] }));
+  addTask = (data) => this.setState(s => ({ tasks: [...s.tasks, { id: s.nextTaskId, ...data }], nextTaskId: s.nextTaskId + 1 }));
+  updateTask = (id, data) => this.setState(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, ...data } : t) }));
+  deleteTask = (id) => this.setState(s => ({ tasks: s.tasks.filter(t => t.id !== id) }));
+  markNotifRead = (id) => this.setState(s => ({ notifications: s.notifications.map(n => n.id === id ? { ...n, unread: false } : n) }));
+  markAllRead = () => this.setState(s => ({ notifications: s.notifications.map(n => ({ ...n, unread: false })) }));
+  setNotifOptIn = (v) => this.setState({ notifOptIn: v });
+  selectIOS = () => this.setState({ platform: 'ios' });
+  selectAndroid = () => this.setState({ platform: 'android' });
+  setConstraint = (k, v) => this.setState(s => ({ constraints: { ...s.constraints, [k]: v } }));
+  connectCalendar = (provider) => this.setState({ calendarConnected: provider });
+  disconnectCalendar = () => this.setState({ calendarConnected: null });
+  addSharedPerson = (name) => this.setState(s => ({ sharedWith: [...s.sharedWith, { name, role: 'Invité' }] }));
+  removeSharedPerson = (i) => this.setState(s => ({ sharedWith: s.sharedWith.filter((_, idx) => idx !== i) }));
+
+  renderVals() {
+    const s = this.state;
+    return {
+      platform: s.platform, isIOS: s.platform === 'ios', isAndroid: s.platform === 'android',
+      selectIOS: this.selectIOS, selectAndroid: this.selectAndroid,
+      screen: s.screen, goTo: this.goTo, goBack: this.goBack,
+      habits: s.habits, toggleHabit: this.toggleHabit,
+      notifOptIn: s.notifOptIn, setNotifOptIn: this.setNotifOptIn,
+      members: s.members, tasks: s.tasks,
+      addTask: this.addTask, updateTask: this.updateTask, deleteTask: this.deleteTask,
+      detailTaskId: s.detailTaskId, editingTaskId: s.editingTaskId, prefillTitle: s.prefillTitle,
+      notifications: s.notifications, markNotifRead: this.markNotifRead, markAllRead: this.markAllRead,
+      constraints: s.constraints, setConstraint: this.setConstraint,
+      calendarConnected: s.calendarConnected, calendarEmail: s.calendarEmail,
+      connectCalendar: this.connectCalendar, disconnectCalendar: this.disconnectCalendar,
+      shareLink: s.shareLink, sharedWith: s.sharedWith,
+      addSharedPerson: this.addSharedPerson, removeSharedPerson: this.removeSharedPerson,
+    };
+  }
+}
+</script>
+</body>
+</html>

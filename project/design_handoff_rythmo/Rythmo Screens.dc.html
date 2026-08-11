@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-411c5e71-9591-4622-b79a-efafc7cbe2ae/styles.css">
+<script src="_ds/nocturne-411c5e71-9591-4622-b79a-efafc7cbe2ae/_ds_bundle.js"></script>
+<style>
+:root{
+  --color-accent:#22d3ee; --color-accent-100:#e6fbff; --color-accent-200:#b8f2fb; --color-accent-300:#7ee6f5;
+  --color-accent-400:#3fd4ea; --color-accent-500:#22d3ee; --color-accent-600:#12a8c2; --color-accent-700:#0e7c96;
+  --color-accent-800:#0a5568; --color-accent-900:#062f3d;
+  --color-accent-2-800:#0a5568; --color-accent-2-100:#e6fbff; --color-accent-2:#22d3ee;
+  --color-bg:#121316; --color-surface:#1c1e22;
+  --radius-sm:3px; --radius-md:6px; --radius-lg:10px;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+}
+@keyframes rp{0%{opacity:.5}50%{opacity:.9}100%{opacity:.5}}
+.rp-skel{animation:rp 1.1s ease-in-out infinite}
+.tech-grid{background-image:linear-gradient(rgba(34,211,238,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,0.06) 1px,transparent 1px);background-size:22px 22px;}
+.card{position:relative}
+.card::before{content:'';position:absolute;top:-1px;left:-1px;width:9px;height:9px;border-top:1.5px solid var(--color-accent);border-left:1.5px solid var(--color-accent);pointer-events:none;opacity:0.65}
+.card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-bottom:1.5px solid var(--color-accent);border-right:1.5px solid var(--color-accent);pointer-events:none;opacity:0.65}
+</style>
+</helmet>
+<div style="height:100%;width:100%;display:flex;flex-direction:column;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);position:relative;overflow:hidden;box-sizing:border-box;padding-top:{{ topPad }}px">
+
+<sc-if value="{{ toastMsg }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;top:14px;left:0;right:0;display:flex;justify-content:center;z-index:40;pointer-events:none;padding:0 16px;">
+    <div class="card" style="flex-direction:row;align-items:center;gap:8px;padding:9px 15px;box-shadow:var(--shadow-md);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M5 13l4 4 10-10"/></svg>
+      <span style="font-size:12.5px;">{{ toastMsg }}</span>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showTopBar }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;flex-shrink:0;border-bottom:1px solid var(--color-divider);">
+    <button onclick="{{ goBack }}" style="width:34px;height:34px;border-radius:var(--radius-md);border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div style="flex:1;font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:16px;">{{ topBarTitle }}</div>
+    <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:6px;">
+        <button onclick="{{ editTask }}" class="btn btn-icon" aria-label="Modifier"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16 5l3 3-11 11-4 1z"/></svg></button>
+        <button onclick="{{ deleteTask }}" class="btn btn-icon" aria-label="Supprimer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M9 7V5h6v2M7 7l1 13h8l1-13"/></svg></button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<div style="flex:1;overflow-y:auto;">
+
+<sc-if value="{{ isOb1 }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;gap:18px;box-sizing:border-box;">
+    <div style="width:64px;height:64px;border-radius:var(--radius-lg);background:var(--color-accent-800);color:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:600;font-size:26px;">R</div>
+    <div>
+      <h1 style="font-size:26px;margin:0 0 8px;">Rythmo</h1>
+      <p style="font-size:14px;color:var(--color-neutral-400);max-width:280px;margin:0 auto;">Le planning familial qui s'organise avec vos priorités, pas l'inverse.</p>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:8px;">
+      <span style="width:20px;height:4px;border-radius:2px;background:var(--color-accent);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;width:220px;justify-content:center;" onclick="{{ goOnboarding2 }}">Commencer</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isOb2 }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:16px;min-height:560px;box-sizing:border-box;">
+    <button onclick="{{ goBack }}" style="align-self:flex-start;background:none;border:none;color:var(--color-neutral-400);display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;padding:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Retour
+    </button>
+    <div>
+      <h2 style="font-size:21px;margin:0 0 6px;">Vos priorités</h2>
+      <p style="font-size:13px;color:var(--color-neutral-400);margin:0;">Sélectionnez ce qui rythme votre semaine. Vous pourrez ajuster plus tard.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <sc-for list="{{ habitChipData }}" as="h" hint-placeholder-count="7">
+        <button onclick="{{ h.toggle }}" style="padding:8px 14px;border-radius:4px;font-size:13px;cursor:pointer;{{ h.style }}">{{ h.label }}</button>
+      </sc-for>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:6px;justify-content:center;">
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:20px;height:4px;border-radius:2px;background:var(--color-accent);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+    </div>
+    <button class="btn btn-primary btn-block" style="justify-content:center;" onclick="{{ goOnboarding3 }}">Continuer</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isOb3 }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:560px;display:flex;flex-direction:column;padding:20px;gap:16px;box-sizing:border-box;">
+    <button onclick="{{ goBack }}" style="align-self:flex-start;background:none;border:none;color:var(--color-neutral-400);display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;padding:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Retour
+    </button>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:0 12px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:var(--color-accent-900);display:flex;align-items:center;justify-content:center;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-300)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 1112 0c0 3.5 1 5.5 2 7H4c1-1.5 2-3.5 2-7z"/><path d="M9.5 20a2.5 2.5 0 005 0"/></svg>
+      </div>
+      <h2 style="font-size:21px;margin:0;">Restez à l'heure</h2>
+      <p style="font-size:13px;color:var(--color-neutral-400);margin:0;max-width:260px;">Rythmo vous rappelle les échéances importantes de la semaine, sans surcharger vos notifications.</p>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center;">
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:20px;height:4px;border-radius:2px;background:var(--color-accent);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+    </div>
+    <button class="btn btn-primary btn-block" style="justify-content:center;" onclick="{{ enableNotifs }}">Activer les rappels</button>
+    <button class="btn btn-ghost" style="justify-content:center;width:100%;" onclick="{{ laterNotifs }}">Plus tard</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isOb4 }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:560px;display:flex;flex-direction:column;padding:20px;gap:16px;box-sizing:border-box;">
+    <button onclick="{{ goBack }}" style="align-self:flex-start;background:none;border:none;color:var(--color-neutral-400);display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;padding:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Retour
+    </button>
+    <div>
+      <h2 style="font-size:21px;margin:0 0 6px;">Vos contraintes</h2>
+      <p style="font-size:13px;color:var(--color-neutral-400);margin:0;">Rythmo évitera ces plages quand il propose des créneaux. Modifiable plus tard dans Profil.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div>
+        <label style="font-size:13px;display:block;margin-bottom:8px;">Sommeil des enfants</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="input" style="flex:1;" value="{{ sleepStart }}" onChange="{{ onSleepStart }}"/>
+          <span style="font-size:12px;color:var(--color-neutral-500);">à</span>
+          <input class="input" style="flex:1;" value="{{ sleepEnd }}" onChange="{{ onSleepEnd }}"/>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:13px;display:block;margin-bottom:8px;">Pause déjeuner</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="input" style="flex:1;" value="{{ lunchStart }}" onChange="{{ onLunchStart }}"/>
+          <span style="font-size:12px;color:var(--color-neutral-500);">à</span>
+          <input class="input" style="flex:1;" value="{{ lunchEnd }}" onChange="{{ onLunchEnd }}"/>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:13px;display:block;margin-bottom:8px;">Ne pas déranger (soirée)</label>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="input" style="flex:1;" value="{{ dndStart }}" onChange="{{ onDndStart }}"/>
+          <span style="font-size:12px;color:var(--color-neutral-500);">à</span>
+          <input class="input" style="flex:1;" value="{{ dndEnd }}" onChange="{{ onDndEnd }}"/>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:6px;justify-content:center;">
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:var(--color-neutral-700);"></span>
+      <span style="width:20px;height:4px;border-radius:2px;background:var(--color-accent);"></span>
+    </div>
+    <button class="btn btn-primary btn-block" style="justify-content:center;" onclick="{{ finishOnboarding }}">Terminer</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+  <div class="tech-grid" style="padding:18px 18px 24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:13px;color:var(--color-neutral-400);">Lundi 10 août</div>
+        <h1 style="font-size:23px;margin:2px 0 0;">Bonjour, Claire</h1>
+      </div>
+      <button onclick="{{ openProfile }}" style="width:38px;height:38px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);border:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:600;font-size:14px;cursor:pointer;flex-shrink:0;">CL</button>
+    </div>
+
+    <button onclick="{{ openReplan }}" class="btn btn-secondary" style="align-self:flex-start;gap:7px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h11l-2.5-2.5M20 16H9l2.5 2.5"/></svg>
+      Replanifier ma semaine
+    </button>
+
+    <div style="display:flex;gap:8px;overflow-x:auto;">
+      <sc-for list="{{ weekDays }}" as="d" hint-placeholder-count="7">
+        <button onclick="{{ d.select }}" style="flex:0 0 auto;width:42px;padding:8px 0;border-radius:var(--radius-md);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:none;{{ d.style }}">
+          <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.04em;">{{ d.key }}</span>
+          <span style="font-size:14px;font-family:var(--font-mono);font-weight:600;">{{ d.num }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ homeLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="rp-skel" style="height:60px;border-radius:var(--radius-md);background:var(--color-surface);"></div>
+        <div class="rp-skel" style="height:60px;border-radius:var(--radius-md);background:var(--color-surface);"></div>
+        <div class="rp-skel" style="height:60px;border-radius:var(--radius-md);background:var(--color-surface);"></div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ homeReady }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;">
+          <h3 style="font-size:15px;margin:0;">{{ dayHeading }}</h3>
+          <span class="tag tag-outline">{{ dayCountLabel }}</span>
+        </div>
+        <sc-if value="{{ hasDayTasks }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ dayTaskCards }}" as="t" hint-placeholder-count="3">
+              <div onclick="{{ t.open }}" class="card" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px;">
+                <div style="width:44px;flex-shrink:0;text-align:center;font-family:var(--font-mono);font-weight:600;font-size:14px;color:var(--color-accent-300);">{{ t.time }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:14px;font-weight:500;margin-bottom:4px;">{{ t.title }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span class="tag tag-outline">{{ t.category }}</span>
+                    <sc-if value="{{ t.isFlexible }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent">Modifiable</span></sc-if>
+                  </div>
+                </div>
+                <sc-if value="{{ t.isSynced }}" hint-placeholder-val="{{ false }}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-right:6px;"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M8 4v4M16 4v4"/></svg>
+                </sc-if>
+                <div style="display:flex;padding-left:8px;flex-shrink:0;">
+                  <sc-for list="{{ t.avatarStack }}" as="av" hint-placeholder-count="1">
+                    <div style="width:24px;height:24px;border-radius:50%;margin-left:-8px;border:2px solid var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;background:{{ av.bg }};color:{{ av.fg }};">{{ av.initials }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasNoDayTasks }}" hint-placeholder-val="{{ false }}">
+          <div class="card" style="align-items:center;text-align:center;gap:10px;padding:24px 18px;">
+            <p style="font-size:13.5px;color:var(--color-neutral-400);margin:0;">Rien de prévu ce jour. Ajoutez une tâche pour organiser la semaine.</p>
+            <button class="btn btn-secondary" onclick="{{ openCreate }}">Ajouter une tâche</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isReplan }}" hint-placeholder-val="{{ false }}">
+  <div class="tech-grid" style="padding:18px 18px 24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
+    <p style="font-size:13px;color:var(--color-neutral-400);margin:0;">Nouveaux créneaux pour vos tâches modifiables, selon leur priorité, leur échéance et vos contraintes.</p>
+    <sc-if value="{{ hasProposals }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <sc-for list="{{ proposals }}" as="pr" hint-placeholder-count="2">
+          <div class="card" style="gap:10px;">
+            <div style="font-size:14px;font-weight:500;">{{ pr.title }}</div>
+            <div style="font-size:12px;color:var(--color-neutral-500);">Actuellement : {{ pr.current }}</div>
+            <div class="card" style="background:var(--color-accent-900);gap:6px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--color-accent-100);">{{ pr.selDay }} · {{ pr.selTime }}</span>
+                <span class="tag tag-accent">Proposé</span>
+              </div>
+              <p style="font-size:12.5px;color:var(--color-accent-100);margin:0;opacity:0.85;">{{ pr.selReasonShort }}</p>
+            </div>
+            <sc-if value="{{ pr.hasAlts }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <sc-for list="{{ pr.alts }}" as="alt" hint-placeholder-count="2">
+                  <button onclick="{{ alt.choose }}" style="padding:5px 10px;border-radius:4px;font-size:11.5px;cursor:pointer;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-neutral-300);">ou {{ alt.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <button onclick="{{ pr.toggleDetail }}" style="align-self:flex-start;background:none;border:none;color:var(--color-accent-300);font-size:12px;cursor:pointer;padding:0;">{{ pr.detailLabel }}</button>
+            <sc-if value="{{ pr.expanded }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <sc-for list="{{ pr.selReasons }}" as="reason" hint-placeholder-count="2">
+                  <div style="font-size:12px;color:var(--color-neutral-400);display:flex;gap:6px;">
+                    <span style="color:var(--color-accent-300);flex-shrink:0;">✓</span>{{ reason }}
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display:flex;gap:8px;margin-top:4px;">
+              <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="{{ pr.accept }}">Accepter</button>
+              <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="{{ pr.ignore }}">Ignorer</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ noProposals }}" hint-placeholder-val="{{ false }}">
+      <div class="card" style="align-items:center;text-align:center;gap:10px;padding:28px 18px;">
+        <p style="font-size:13.5px;color:var(--color-neutral-400);margin:0;">Aucune tâche modifiable à replanifier pour le moment. Utilisez « Choisis pour moi » en créant une tâche pour lui laisser un créneau flexible.</p>
+        <button class="btn btn-secondary" onclick="{{ openHome }}">Retour à l'accueil</button>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isShare }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:18px 18px 24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
+    <p style="font-size:13px;color:var(--color-neutral-400);margin:0;">Les personnes invitées voient les événements et tâches synchronisés avec votre calendrier.</p>
+    <div class="card" style="gap:10px;">
+      <label style="font-size:11.5px;color:var(--color-neutral-500);">Lien de partage</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="flex:1;font-family:var(--font-mono);font-size:13px;color:var(--color-accent-300);overflow:hidden;text-overflow:ellipsis;">{{ shareLink }}</span>
+        <button class="btn btn-secondary" onclick="{{ copyLink }}" style="flex-shrink:0;font-size:12px;padding:5px 10px;">Copier</button>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);display:block;margin-bottom:10px;">Partagé avec</label>
+      <sc-if value="{{ hasSharedWith }}" hint-placeholder-val="{{ true }}">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <sc-for list="{{ sharedWithRows }}" as="per" hint-placeholder-count="1">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--color-divider);">
+              <div style="flex:1;">
+                <div style="font-size:14px;">{{ per.name }}</div>
+                <div style="font-size:11.5px;color:var(--color-neutral-500);">{{ per.role }}</div>
+              </div>
+              <button class="btn btn-icon" onclick="{{ per.remove }}" aria-label="Retirer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="input" style="flex:1;" placeholder="Nom de la personne à inviter" value="{{ newSharedName }}" onChange="{{ onNewSharedNameChange }}"/>
+      <button class="btn btn-primary" onclick="{{ inviteSharedPerson }}" style="flex-shrink:0;">Inviter</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:18px 18px 24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
+    <h1 style="font-size:21px;margin:0;">Rechercher</h1>
+    <div class="field">
+      <input class="input" placeholder="Rechercher une tâche, une routine..." value="{{ searchQuery }}" onChange="{{ onSearchChange }}"/>
+    </div>
+    <div style="display:flex;gap:8px;overflow-x:auto;">
+      <sc-for list="{{ filterChipData }}" as="f" hint-placeholder-count="6">
+        <button onclick="{{ f.select }}" style="flex:0 0 auto;padding:7px 14px;border-radius:4px;font-size:12.5px;cursor:pointer;border:none;{{ f.style }}">{{ f.label }}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ showSuggestions }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:10px;">Suggestions</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ suggestionItems }}" as="s" hint-placeholder-count="4">
+            <div onclick="{{ s.tap }}" class="card" style="cursor:pointer;flex-direction:row;align-items:center;justify-content:space-between;">
+              <span style="font-size:14px;">{{ s.label }}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasNoResults }}" hint-placeholder-val="{{ false }}">
+      <div class="card" style="align-items:center;text-align:center;gap:8px;padding:28px 18px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
+        <p style="font-size:13.5px;color:var(--color-neutral-400);margin:0;">Aucun résultat pour « {{ searchQuery }} ».</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <sc-for list="{{ searchResults }}" as="t" hint-placeholder-count="4">
+          <div onclick="{{ t.open }}" class="card" style="cursor:pointer;flex-direction:row;align-items:center;gap:12px;">
+            <div style="width:48px;flex-shrink:0;text-align:center;">
+              <div style="font-size:10px;color:var(--color-neutral-500);text-transform:uppercase;">{{ t.day }}</div>
+              <div style="font-family:var(--font-mono);font-weight:600;font-size:13px;color:var(--color-accent-300);">{{ t.time }}</div>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:500;margin-bottom:4px;">{{ t.title }}</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span class="tag tag-outline">{{ t.category }}</span>
+                <sc-if value="{{ t.isFlexible }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent">Modifiable</span></sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ t.isSynced }}" hint-placeholder-val="{{ false }}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-right:6px;"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M8 4v4M16 4v4"/></svg>
+            </sc-if>
+            <div style="display:flex;padding-left:8px;flex-shrink:0;">
+              <sc-for list="{{ t.avatarStack }}" as="av" hint-placeholder-count="1">
+                <div style="width:24px;height:24px;border-radius:50%;margin-left:-8px;border:2px solid var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;background:{{ av.bg }};color:{{ av.fg }};">{{ av.initials }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ hasDetailTask }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:20px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box;">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-outline">{{ detailTask.category }}</span>
+          <span class="tag tag-neutral">{{ detailTask.priorityLabel }}</span>
+          <sc-if value="{{ detailTask.isFlexible }}" hint-placeholder-val="{{ false }}"><span class="tag tag-accent">Modifiable</span></sc-if>
+          <sc-if value="{{ detailTask.isAnchored }}" hint-placeholder-val="{{ true }}"><span class="tag tag-neutral">Ancrée</span></sc-if>
+        </div>
+        <h1 style="font-size:22px;margin:10px 0 0;">{{ detailTask.title }}</h1>
+      </div>
+      <div class="card" style="gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M8 4v4M16 4v4"/></svg>
+          <span style="font-size:14px;">{{ detailTask.dayFull }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4l3 2"/></svg>
+          <span style="font-size:14px;font-family:var(--font-mono);">{{ detailTask.time }} · {{ detailTask.durationLabel }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h11l-2.5-2.5M20 16H9l2.5 2.5"/></svg>
+          <span style="font-size:14px;">{{ detailTask.recurrenceLabel }}</span>
+        </div>
+        <sc-if value="{{ detailTask.hasDeadline }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 1-4.5 4.5L17 20l-5-3-5 3 1.5-6.5L4 9l6-1z"/></svg>
+            <span style="font-size:14px;">Échéance : {{ detailTask.deadlineLabel }}</span>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ hasCalendar }}" hint-placeholder-val="{{ false }}">
+        <div class="card" style="flex-direction:row;align-items:center;gap:12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-400)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M8 4v4M16 4v4"/></svg>
+          <span style="flex:1;font-size:13.5px;">{{ detailTask.syncLabel }}</span>
+          <button class="btn btn-ghost" onclick="{{ toggleDetailSync }}" style="font-size:12px;padding:4px 8px;">{{ detailTask.syncToggleLabel }}</button>
+        </div>
+      </sc-if>
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:8px;">Assigné à</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ detailTask.avatarStack }}" as="av" hint-placeholder-count="1">
+            <div class="card" style="flex-direction:row;align-items:center;gap:12px;">
+              <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:{{ av.bg }};color:{{ av.fg }};">{{ av.initials }}</div>
+              <span style="font-size:14px;">{{ av.name }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:12px;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:6px;">Notes</div>
+          <p style="font-size:14px;color:var(--color-neutral-300);margin:0;">{{ detailTask.notes }}</p>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</sc-if>
+
+<sc-if value="{{ isCreate }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:20px 20px 32px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box;">
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;">
+        <label style="font-size:13px;">Tâches à ajouter</label>
+        <button class="btn btn-secondary" type="button" onclick="{{ chooseForMe }}" style="flex-shrink:0;">Choisis pour moi (jour &amp; heure)</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="1">
+          <div class="card" style="gap:10px;">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="input" style="flex:1;" placeholder="Titre de la tâche" value="{{ row.title }}" onChange="{{ row.onTitleChange }}"/>
+              <sc-if value="{{ row.canRemove }}" hint-placeholder-val="{{ false }}">
+                <button class="btn btn-icon" type="button" onclick="{{ row.remove }}" aria-label="Retirer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:5px;overflow-x:auto;">
+              <sc-for list="{{ row.dayChips }}" as="c" hint-placeholder-count="7">
+                <button onclick="{{ c.select }}" style="flex:0 0 auto;width:36px;padding:6px 0;border-radius:var(--radius-md);font-size:11.5px;cursor:pointer;border:none;{{ c.style }}">{{ c.label }}</button>
+              </sc-for>
+              <input class="input" style="width:76px;flex-shrink:0;" placeholder="09:00" value="{{ row.time }}" onChange="{{ row.onTimeChange }}"/>
+            </div>
+            <sc-if value="{{ row.hasTag }}" hint-placeholder-val="{{ false }}">
+              <span class="tag {{ row.tagClass }}" style="align-self:flex-start;">{{ row.tagLabel }}</span>
+            </sc-if>
+            <div>
+              <label style="font-size:11.5px;color:var(--color-neutral-500);display:block;margin-bottom:6px;">Durée</label>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                <sc-for list="{{ row.durationChips }}" as="du" hint-placeholder-count="5">
+                  <button onclick="{{ du.select }}" style="padding:5px 10px;border-radius:4px;font-size:11.5px;cursor:pointer;border:none;{{ du.style }}">{{ du.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11.5px;color:var(--color-neutral-500);display:block;margin-bottom:6px;">Priorité / énergie</label>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;">
+                <sc-for list="{{ row.priorityChips }}" as="pc" hint-placeholder-count="3">
+                  <button onclick="{{ pc.select }}" style="padding:5px 10px;border-radius:4px;font-size:11.5px;cursor:pointer;border:none;{{ pc.style }}">{{ pc.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11.5px;color:var(--color-neutral-500);display:block;margin-bottom:6px;">Échéance (optionnel)</label>
+              <div style="display:flex;gap:5px;overflow-x:auto;">
+                <sc-for list="{{ row.deadlineChips }}" as="dl" hint-placeholder-count="8">
+                  <button onclick="{{ dl.select }}" style="flex:0 0 auto;padding:5px 10px;border-radius:4px;font-size:11.5px;cursor:pointer;border:none;{{ dl.style }}">{{ dl.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <button class="btn btn-ghost" type="button" onclick="{{ addRow }}" style="align-self:flex-start;">+ Ajouter une tâche</button>
+      </div>
+    </div>
+
+    <div>
+      <label style="font-size:13px;display:block;margin-bottom:8px;">Catégorie</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <sc-for list="{{ catChipData }}" as="c" hint-placeholder-count="5">
+          <button onclick="{{ c.select }}" style="padding:7px 14px;border-radius:4px;font-size:13px;cursor:pointer;border:none;{{ c.style }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:13px;display:block;margin-bottom:8px;">Assigné à (plusieurs possibles)</label>
+      <div style="display:flex;gap:8px;">
+        <sc-for list="{{ membersChipData }}" as="m" hint-placeholder-count="3">
+          <button onclick="{{ m.select }}" style="flex:1;padding:8px;border-radius:var(--radius-md);font-size:13px;cursor:pointer;border:none;{{ m.style }}">{{ m.name }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ hasAgeSuggestions }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <label style="font-size:11.5px;color:var(--color-neutral-500);display:block;margin-bottom:8px;">Suggestions pour {{ ageSuggestLabel }}</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <sc-for list="{{ ageSuggestions }}" as="ag" hint-placeholder-count="6">
+            <button onclick="{{ ag.add }}" style="padding:5px 10px;border-radius:4px;font-size:11.5px;cursor:pointer;border:1px solid var(--color-divider);background:var(--color-surface);color:var(--color-neutral-300);">+ {{ ag.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+      <input type="checkbox" checked="{{ formRecurring }}" onChange="{{ toggleRecurring }}"/>
+      Se répète chaque semaine
+    </label>
+    <sc-if value="{{ hasCalendar }}" hint-placeholder-val="{{ false }}">
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;">
+        <input type="checkbox" checked="{{ formSynced }}" onChange="{{ toggleSynced }}"/>
+        Synchroniser avec {{ calendarLabel }}
+      </label>
+    </sc-if>
+    <sc-if value="{{ noCalendar }}" hint-placeholder-val="{{ false }}">
+      <p style="font-size:12px;color:var(--color-neutral-500);margin:0;">Connectez un calendrier dans Profil pour synchroniser vos tâches.</p>
+    </sc-if>
+    <div class="field">
+      <label>Notes (optionnel)</label>
+      <textarea class="input" placeholder="Détails, lieu, rappel..." value="{{ formNotes }}" onChange="{{ onNotesChange }}"></textarea>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+      <button class="btn btn-primary btn-block" style="justify-content:center;" disabled="{{ notCanSave }}" onclick="{{ saveTask }}">{{ saveLabel }}</button>
+      <button class="btn btn-ghost" style="justify-content:center;width:100%;" onclick="{{ goBack }}">Annuler</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:20px 18px 24px;display:flex;flex-direction:column;gap:20px;box-sizing:border-box;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--color-accent-800);color:var(--color-accent-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:600;font-size:22px;">CL</div>
+      <div>
+        <div style="font-size:17px;font-family:var(--font-heading);font-weight:var(--font-heading-weight);">Claire Dubois</div>
+        <div style="font-size:12.5px;color:var(--color-neutral-500);">Compte principal</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:10px;">Membres de la famille</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <sc-for list="{{ memberRows }}" as="m" hint-placeholder-count="2">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--color-divider);">
+            <div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:{{ m.avatarBg }};color:{{ m.avatarFg }};">{{ m.initials }}</div>
+            <div style="flex:1;font-size:14px;">{{ m.name }}</div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </sc-for>
+        <div style="padding:12px 14px;display:flex;align-items:center;gap:10px;color:var(--color-accent-300);font-size:14px;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          Ajouter un membre
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:10px;">Calendrier</div>
+      <sc-if value="{{ hasCalendar }}" hint-placeholder-val="{{ false }}">
+        <div class="card" style="flex-direction:row;align-items:center;gap:12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-300)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 10h16M8 4v4M16 4v4"/></svg>
+          <div style="flex:1;">
+            <div style="font-size:13.5px;">Connecté à {{ calendarLabel }}</div>
+            <div style="font-size:11.5px;color:var(--color-neutral-500);">{{ calendarEmail }}</div>
+          </div>
+          <button class="btn btn-ghost" onclick="{{ disconnectCalendar }}" style="font-size:12px;padding:4px 8px;">Déconnecter</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noCalendar }}" hint-placeholder-val="{{ true }}">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <sc-for list="{{ calendarProviders }}" as="cal" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--color-divider);">
+              <span style="flex:1;font-size:14px;">{{ cal.label }}</span>
+              <button class="btn btn-secondary" onclick="{{ cal.connect }}" style="font-size:12px;padding:5px 10px;">Connecter</button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div>
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:10px;">Contraintes récurrentes</div>
+      <div class="card" style="gap:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span>Sommeil des enfants</span><span style="color:var(--color-neutral-400);">{{ sleepStart }} – {{ sleepEnd }}</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span>Pause déjeuner</span><span style="color:var(--color-neutral-400);">{{ lunchStart }} – {{ lunchEnd }}</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;"><span>Ne pas déranger</span><span style="color:var(--color-neutral-400);">{{ dndStart }} – {{ dndEnd }}</span></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:10px;">Paramètres</div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--color-divider);cursor:pointer;">
+          <span style="flex:1;font-size:14px;">Notifications</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--color-divider);cursor:pointer;">
+          <span style="flex:1;font-size:14px;">Confidentialité</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;">
+          <span style="flex:1;font-size:14px;">Aide &amp; support</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-block" style="justify-content:center;" onclick="{{ openShare }}">Partager le planning</button>
+    <button class="btn btn-ghost btn-block" style="justify-content:center;">Se déconnecter</button>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isNotifications }}" hint-placeholder-val="{{ false }}">
+  <div style="padding:18px 18px 24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h1 style="font-size:21px;margin:0;">Notifications</h1>
+      <button onclick="{{ markAllRead }}" class="btn btn-ghost" style="font-size:12px;padding:4px 8px;">Tout marquer comme lu</button>
+    </div>
+    <sc-if value="{{ hasNotifToday }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:8px;">Aujourd'hui</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ notifToday }}" as="n" hint-placeholder-count="2">
+            <div onclick="{{ n.markRead }}" class="card" style="flex-direction:row;align-items:flex-start;gap:10px;cursor:pointer;">
+              <div style="width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;background:{{ n.dotColor }};"></div>
+              <div style="flex:1;">
+                <div style="font-size:13.5px;">{{ n.title }}</div>
+                <div style="font-size:11.5px;color:var(--color-neutral-500);margin-top:2px;">{{ n.time }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasNotifWeek }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-neutral-500);margin-bottom:8px;">Cette semaine</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ notifWeek }}" as="n" hint-placeholder-count="2">
+            <div onclick="{{ n.markRead }}" class="card" style="flex-direction:row;align-items:flex-start;gap:10px;cursor:pointer;">
+              <div style="width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;background:{{ n.dotColor }};"></div>
+              <div style="flex:1;">
+                <div style="font-size:13.5px;">{{ n.title }}</div>
+                <div style="font-size:11.5px;color:var(--color-neutral-500);margin-top:2px;">{{ n.time }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ noNotifs }}" hint-placeholder-val="{{ false }}">
+      <div class="card" style="align-items:center;text-align:center;gap:8px;padding:28px 18px;">
+        <p style="font-size:13.5px;color:var(--color-neutral-400);margin:0;">Vous êtes à jour.</p>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ showTabBar }}" hint-placeholder-val="{{ false }}">
+  <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-around;padding:8px 6px 12px;border-top:1px solid var(--color-divider);background:var(--color-bg);">
+    <button onclick="{{ openHome }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:{{ homeColor }};">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
+      <span style="font-size:10px;">Accueil</span>
+    </button>
+    <button onclick="{{ openSearch }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:{{ searchColor }};">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
+      <span style="font-size:10px;">Recherche</span>
+    </button>
+    <button onclick="{{ openCreate }}" style="width:46px;height:46px;border-radius:50%;background:var(--color-bg);border:1.5px solid var(--color-accent);display:flex;align-items:center;justify-content:center;color:var(--color-accent-300);margin-top:-18px;box-shadow:var(--shadow-sm);cursor:pointer;flex-shrink:0;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button onclick="{{ openNotifications }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:{{ notifColor }};position:relative;">
+      <div style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 1112 0c0 3.5 1 5.5 2 7H4c1-1.5 2-3.5 2-7z"/><path d="M9.5 20a2.5 2.5 0 005 0"/></svg>
+        <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ false }}">
+          <span style="position:absolute;top:-2px;right:-2px;width:7px;height:7px;border-radius:50%;background:var(--color-accent);"></span>
+        </sc-if>
+      </div>
+      <span style="font-size:10px;">Alertes</span>
+    </button>
+    <button onclick="{{ openProfile }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:{{ profileColor }};">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1.2-4 4-6 7.5-6s6.3 2 7.5 6"/></svg>
+      <span style="font-size:10px;">Profil</span>
+    </button>
+  </div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DAYS7 = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+const TIME_POOL = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+const MORNING = ['08:00', '09:00', '10:00', '11:00'];
+const MIDDAY = ['12:00', '14:00', '15:00', '16:00'];
+const EVENING = ['17:00', '18:00', '19:00', '20:00'];
+const PRIORITY_LABEL = { high: 'Concentration élevée', medium: 'Énergie moyenne', low: 'Tâche légère' };
+const DURATIONS = [15, 30, 45, 60, 90];
+const CALENDAR_LABEL = { google: 'Google Calendar', apple: 'Calendrier Apple', outlook: 'Outlook' };
+
+const BRACKET_LABEL = { under6: 'moins de 6 ans', '6-9': '6-9 ans', '10-12': '10-12 ans', '13-17': '13-17 ans', adult: 'adulte', senior: '65 ans et +' };
+const AGE_TASKS = {
+  under6: [
+    { title: 'Change de couche', category: 'Maison' }, { title: 'Biberon / repas adapté', category: 'Maison' },
+    { title: 'Sieste', category: 'Maison' }, { title: 'Bain', category: 'Maison' },
+    { title: 'Dépose/récupération crèche ou nounou', category: 'Maison' }, { title: 'Histoire du soir', category: 'Loisirs' },
+    { title: 'Jeux libres / éveil', category: 'Loisirs' }, { title: 'Rendez-vous pédiatre / vaccins', category: 'Santé' },
+    { title: 'Brossage des dents', category: 'Santé' }, { title: 'Promenade / sortie au parc', category: 'Loisirs' },
+    { title: 'Apprentissage de la propreté', category: 'Maison' },
+  ],
+  '6-9': [
+    { title: 'Préparer le cartable', category: 'École' }, { title: 'Faire les devoirs', category: 'École' },
+    { title: 'Lecture du soir', category: 'Loisirs' }, { title: 'Brossage de dents matin/soir', category: 'Santé' },
+    { title: 'Douche/bain', category: 'Maison' }, { title: 'Ranger sa chambre', category: 'Maison' },
+    { title: 'Activité extrascolaire', category: 'Loisirs' }, { title: 'Coucher à heure fixe', category: 'Maison' },
+    { title: 'Temps d\u2019écran limité', category: 'Loisirs' },
+  ],
+  '10-12': [
+    { title: 'Faire les devoirs', category: 'École' }, { title: 'Révisions', category: 'École' },
+    { title: 'Lecture du soir', category: 'Loisirs' }, { title: 'Brossage de dents matin/soir', category: 'Santé' },
+    { title: 'Douche/bain', category: 'Maison' }, { title: 'Ranger sa chambre', category: 'Maison' },
+    { title: 'Activité extrascolaire', category: 'Loisirs' }, { title: 'Club sportif', category: 'Loisirs' },
+    { title: 'Sortie entre amis', category: 'Loisirs' }, { title: 'Aide ménagère (vaisselle, poubelles)', category: 'Maison' },
+    { title: 'Coucher à heure fixe', category: 'Maison' }, { title: 'Temps d\u2019écran limité', category: 'Loisirs' },
+  ],
+  '13-17': [
+    { title: 'Devoirs / révisions', category: 'École' }, { title: 'Cours particuliers', category: 'École' },
+    { title: 'Club sportif', category: 'Loisirs' }, { title: 'Sortie entre amis', category: 'Loisirs' },
+    { title: 'Aide ménagère (vaisselle, poubelles)', category: 'Maison' }, { title: 'Rendez-vous orthodontiste', category: 'Santé' },
+    { title: 'Leçons de conduite', category: 'Loisirs' }, { title: 'Petit boulot / job d\u2019été', category: 'Travail' },
+  ],
+  senior: [
+    { title: 'Prise de médicaments', category: 'Santé' }, { title: 'Rendez-vous médicaux réguliers', category: 'Santé' },
+    { title: 'Courses (avec aide)', category: 'Maison' }, { title: 'Promenade / activité physique douce', category: 'Loisirs' },
+    { title: 'Visite famille / petits-enfants', category: 'Loisirs' }, { title: 'Activités sociales (club, association)', category: 'Loisirs' },
+    { title: 'Aide à domicile', category: 'Maison' }, { title: 'Démarches administratives (retraite, mutuelle)', category: 'Maison' },
+  ],
+};
+const TRANSVERSAL_TASKS = [
+  { title: 'Repas principaux', category: 'Maison', minAge: 0 }, { title: 'Hygiène quotidienne', category: 'Santé', minAge: 0 },
+  { title: 'Sommeil (coucher/lever)', category: 'Maison', minAge: 0 }, { title: 'Anniversaire / événement familial', category: 'Loisirs', minAge: 0 },
+  { title: 'Activité religieuse ou spirituelle', category: 'Loisirs', minAge: 12 },
+];
+function ageGroup(age) {
+  if (age == null) return 'adult';
+  if (age < 6) return 'under6';
+  if (age <= 9) return '6-9';
+  if (age <= 12) return '10-12';
+  if (age <= 17) return '13-17';
+  if (age < 65) return 'adult';
+  return 'senior';
+}
+
+function toMin(t) { const [h, m] = (t || '00:00').split(':').map(Number); return h * 60 + (m || 0); }
+function inRange(min, start, end) {
+  const s = toMin(start), e = toMin(end);
+  if (s <= e) return min >= s && min < e;
+  return min >= s || min < e;
+}
+
+function scoreCandidate(day, time, task, allTasks, constraints, memberIds) {
+  const tMin = toMin(time);
+  if (inRange(tMin, constraints.lunchStart, constraints.lunchEnd)) return null;
+  if (inRange(tMin, constraints.dndStart, constraints.dndEnd)) return null;
+  if (inRange(tMin, constraints.sleepStart, constraints.sleepEnd)) return null;
+  if (task.deadline) {
+    if (DAYS7.indexOf(day) > DAYS7.indexOf(task.deadline)) return null;
+  }
+  const conflict = allTasks.some(t => t.id !== task.id && t.day === day && t.time === time && (t.members || []).some(m => memberIds.includes(m)));
+  if (conflict) return null;
+
+  let score = 0;
+  const reasons = [];
+  const priority = task.priority || 'medium';
+  if (priority === 'high' && MORNING.includes(time)) { score += 3; reasons.push('Créneau de concentration le matin — adapté à une tâche prioritaire.'); }
+  else if (priority === 'low' && EVENING.includes(time)) { score += 3; reasons.push('Tâche légère placée en fin de journée.'); }
+  else if (priority === 'medium' && MIDDAY.includes(time)) { score += 2; reasons.push('Énergie moyenne, créneau de milieu de journée.'); }
+  else { score += 0.5; }
+
+  if (task.deadline) {
+    const daysUntil = DAYS7.indexOf(task.deadline) - DAYS7.indexOf(day);
+    score += Math.max(0, 3 - daysUntil);
+    if (daysUntil <= 1) reasons.push('Respecte l\u2019échéance (' + task.deadline + ').');
+  }
+  const loadOnDay = allTasks.filter(t => t.id !== task.id && t.day === day).length;
+  score += Math.max(0, 2 - loadOnDay);
+  if (loadOnDay === 0) reasons.push('Journée encore dégagée.');
+  reasons.push('Respecte la pause déjeuner et les plages de repos.');
+  reasons.push('Aucun conflit avec le planning existant.');
+  return { day, time, score, reasons };
+}
+
+function getProposals(task, allTasks, constraints, memberIds) {
+  const candidates = [];
+  DAYS7.forEach(day => {
+    TIME_POOL.forEach(time => {
+      const c = scoreCandidate(day, time, task, allTasks, constraints, memberIds);
+      if (c) candidates.push(c);
+    });
+  });
+  candidates.sort((a, b) => b.score - a.score);
+  const seenDays = new Set();
+  const top = [];
+  for (const c of candidates) {
+    if (seenDays.has(c.day)) continue;
+    seenDays.add(c.day);
+    top.push(c);
+    if (top.length === 3) break;
+  }
+  return top;
+}
+
+class Component extends DCLogic {
+  state = {
+    selectedDay: 'Lun', searchQuery: '', activeFilter: 'Tous',
+    taskRows: [{ title: '', day: '', time: '', locked: false, duration: 30, priority: 'medium', deadline: '' }],
+    formCategory: 'Maison', formMembers: [], formRecurring: false, formNotes: '', formSynced: false,
+    homeLoading: false, toastMsg: '', newSharedName: '',
+    replanSelected: {}, replanExpanded: {}, replanDismissed: {},
+  };
+
+  setField = (k, v) => this.setState({ [k]: v });
+  showToast = (msg) => { this.setState({ toastMsg: msg }); clearTimeout(this._toastT); this._toastT = setTimeout(() => this.setState({ toastMsg: '' }), 2400); };
+
+  componentDidUpdate(prevProps) {
+    if (this.props.screen !== prevProps.screen) {
+      if (this.props.screen === 'create') {
+        const t = this.props.editingTaskId ? (this.props.tasks || []).find(x => x.id === this.props.editingTaskId) : null;
+        this.setState({
+          taskRows: [{
+            title: t ? t.title : (this.props.prefillTitle || ''), day: t ? t.day : '', time: t ? t.time : '', locked: t ? !t.flexible : false,
+            duration: t ? (t.duration || 30) : 30, priority: t ? (t.priority || 'medium') : 'medium', deadline: t ? (t.deadline || '') : '',
+          }],
+          formCategory: t ? t.category : 'Maison',
+          formMembers: t ? (t.members || []) : ((this.props.members && this.props.members[0]) ? [this.props.members[0].id] : []),
+          formRecurring: t ? !!t.recurring : false,
+          formNotes: t ? (t.notes || '') : '',
+          formSynced: t ? !!t.synced : false,
+        });
+      }
+      if (this.props.screen === 'home' && prevProps.screen !== 'home') {
+        this.setState({ homeLoading: true });
+        clearTimeout(this._loadT);
+        this._loadT = setTimeout(() => this.setState({ homeLoading: false }), 650);
+      }
+      if (this.props.screen === 'replan') {
+        this.setState({ replanSelected: {}, replanExpanded: {}, replanDismissed: {} });
+      }
+    }
+  }
+
+  setRowField = (i, k, v) => this.setState(s => { const rows = s.taskRows.slice(); rows[i] = { ...rows[i], [k]: v }; return { taskRows: rows }; });
+  setRowDay = (i, day) => this.setState(s => { const rows = s.taskRows.slice(); rows[i] = { ...rows[i], day, locked: true }; return { taskRows: rows }; });
+  setRowTime = (i, time) => this.setState(s => { const rows = s.taskRows.slice(); rows[i] = { ...rows[i], time, locked: true }; return { taskRows: rows }; });
+  addRow = () => this.setState(s => ({ taskRows: [...s.taskRows, { title: '', day: '', time: '', locked: false, duration: 30, priority: 'medium', deadline: '' }] }));
+  removeRow = (i) => this.setState(s => {
+    if (s.taskRows.length <= 1) return { taskRows: [{ title: '', day: '', time: '', locked: false, duration: 30, priority: 'medium', deadline: '' }] };
+    return { taskRows: s.taskRows.filter((_, idx) => idx !== i) };
+  });
+  toggleFormMember = (id) => this.setState(s => ({ formMembers: s.formMembers.includes(id) ? s.formMembers.filter(x => x !== id) : [...s.formMembers, id] }));
+
+  chooseForMe = () => {
+    const p = this.props;
+    const existing = (p.tasks || []).filter(t => t.id !== p.editingTaskId);
+    const memberIds = this.state.formMembers || [];
+    this.setState(s => {
+      const usedSlots = new Set(existing.map(t => t.day + '|' + t.time));
+      s.taskRows.forEach(r => { if (r.day && r.time) usedSlots.add(r.day + '|' + r.time); });
+      const rows = s.taskRows.map(row => {
+        if (row.locked && row.day) return row;
+        let chosen = null;
+        for (let attempt = 0; attempt < 50 && !chosen; attempt++) {
+          const day = DAYS7[Math.floor(Math.random() * DAYS7.length)];
+          const time = TIME_POOL[Math.floor(Math.random() * TIME_POOL.length)];
+          const key = day + '|' + time;
+          if (usedSlots.has(key)) continue;
+          const conflict = existing.some(t => t.day === day && t.time === time && (t.members || []).some(m => memberIds.includes(m)));
+          if (conflict) continue;
+          chosen = { day, time };
+        }
+        if (!chosen) chosen = { day: DAYS7[Math.floor(Math.random() * DAYS7.length)], time: TIME_POOL[Math.floor(Math.random() * TIME_POOL.length)] };
+        usedSlots.add(chosen.day + '|' + chosen.time);
+        return { ...row, day: chosen.day, time: chosen.time, locked: false };
+      });
+      return { taskRows: rows };
+    });
+  };
+
+  saveTask = () => {
+    const s = this.state;
+    const shared = { category: s.formCategory, members: s.formMembers, recurring: s.formRecurring, notes: s.formNotes };
+    const rowsToSave = s.taskRows.filter(r => r.title.trim());
+    if (!rowsToSave.length) return;
+    const build = r => ({ title: r.title.trim(), day: r.day || 'Lun', time: (r.time || '').trim() || '—', flexible: !r.locked, duration: r.duration, priority: r.priority, deadline: r.deadline || null, synced: !!(this.props.calendarConnected && s.formSynced), ...shared });
+    if (this.props.editingTaskId) {
+      this.props.updateTask(this.props.editingTaskId, build(rowsToSave[0]));
+    } else {
+      rowsToSave.forEach(r => this.props.addTask(build(r)));
+    }
+    this.props.goTo('home');
+  };
+
+  renderVals() {
+    const p = this.props;
+    const platform = p.platform || 'ios';
+    const topPad = platform === 'ios' ? 62 : 0;
+    const screen = p.screen;
+    const tasks = p.tasks || [];
+    const members = p.members || [];
+    const notifications = p.notifications || [];
+    const habits = p.habits || [];
+    const constraints = p.constraints || {};
+    const s = this.state;
+
+    const dayFull = { Lun: 'Lundi', Mar: 'Mardi', Mer: 'Mercredi', Jeu: 'Jeudi', Ven: 'Vendredi', Sam: 'Samedi', Dim: 'Dimanche' };
+    const tint = {
+      accent: { bg: 'var(--color-accent-800)', fg: 'var(--color-accent-100)' },
+      neutral: { bg: 'var(--color-neutral-700)', fg: 'var(--color-neutral-100)' },
+      accent2: { bg: 'var(--color-accent-2-800)', fg: 'var(--color-accent-2-100)' },
+    };
+    const memberById = {};
+    members.forEach(m => memberById[m.id] = m);
+    const decorate = (t) => {
+      const ids = t.members && t.members.length ? t.members : (t.member ? [t.member] : []);
+      const avatarStack = ids.map(id => {
+        const m = memberById[id];
+        const tt = tint[m ? m.tint : 'neutral'];
+        return { name: m ? m.name : '', initials: m ? m.initials : '?', bg: tt.bg, fg: tt.fg };
+      });
+      return {
+        ...t, dayFull: dayFull[t.day] || t.day, recurrenceLabel: t.recurring ? 'Tâche récurrente' : 'Événement ponctuel', kindLabel: t.recurring ? 'Tâche' : 'Événement',
+        avatarStack, isFlexible: !!t.flexible, isAnchored: !t.flexible,
+        priorityLabel: PRIORITY_LABEL[t.priority] || PRIORITY_LABEL.medium,
+        durationLabel: (t.duration || 30) + ' min', hasDeadline: !!t.deadline, deadlineLabel: t.deadline ? dayFull[t.deadline] : '',
+        isSynced: !!t.synced,
+        syncLabel: t.synced ? ('Synchronisé avec ' + (CALENDAR_LABEL[p.calendarConnected] || 'le calendrier')) : 'Non synchronisé',
+        syncToggleLabel: t.synced ? 'Ne plus synchroniser' : 'Synchroniser',
+        open: () => p.goTo('detail', { detailTaskId: t.id }),
+      };
+    };
+
+    const weekDays = [
+      { key: 'Lun', num: 10 }, { key: 'Mar', num: 11 }, { key: 'Mer', num: 12 }, { key: 'Jeu', num: 13 },
+      { key: 'Ven', num: 14 }, { key: 'Sam', num: 15 }, { key: 'Dim', num: 16 },
+    ].map(d => {
+      const active = d.key === s.selectedDay;
+      return { ...d, select: () => this.setField('selectedDay', d.key), style: active ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);' };
+    });
+
+    const dayTasksRaw = tasks.filter(t => t.day === s.selectedDay).slice().sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+    const dayTaskCards = dayTasksRaw.map(decorate);
+    const dayHeading = s.selectedDay === 'Lun' ? "Aujourd'hui" : dayFull[s.selectedDay];
+
+    const categories = ['École', 'Travail', 'Maison', 'Santé', 'Loisirs'];
+    const categoriesWithAll = ['Tous', ...categories];
+
+    const q = s.searchQuery.trim().toLowerCase();
+    const filter = s.activeFilter;
+    const showSuggestions = !q && filter === 'Tous';
+    let searchResultsRaw = [];
+    if (!showSuggestions) {
+      searchResultsRaw = tasks.filter(t => {
+        const matchesQ = !q || t.title.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
+        const matchesFilter = filter === 'Tous' || t.category === filter;
+        return matchesQ && matchesFilter;
+      });
+    }
+    const searchResults = searchResultsRaw.slice().sort((a, b) => a.day.localeCompare(b.day)).map(decorate);
+    const suggestionItems = ['Routine du matin', 'Devoirs du soir', 'Ménage du week-end', 'Sortie en famille'].map(label => ({ label, tap: () => p.goTo('create', { prefillTitle: label }) }));
+
+    const filterChipData = categoriesWithAll.map(c => {
+      const sel = filter === c;
+      return { label: c, select: () => this.setField('activeFilter', c), style: sel ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);' };
+    });
+
+    const detailTaskRaw = tasks.find(t => t.id === p.detailTaskId) || null;
+    const detailTask = detailTaskRaw ? decorate(detailTaskRaw) : null;
+
+    const notifDot = n => n.unread ? 'var(--color-accent)' : 'var(--color-neutral-700)';
+    const notifToday = notifications.filter(n => n.group === 'today').map(n => ({ ...n, dotColor: notifDot(n), markRead: () => p.markNotifRead(n.id) }));
+    const notifWeek = notifications.filter(n => n.group === 'week').map(n => ({ ...n, dotColor: notifDot(n), markRead: () => p.markNotifRead(n.id) }));
+    const hasUnread = notifications.some(n => n.unread);
+
+    const habitOptions = ['Horaires de travail', 'École & devoirs', 'Activités extrascolaires', 'Sommeil des enfants', 'Tâches ménagères', 'Temps en famille', 'Rendez-vous santé'];
+    const habitChipData = habitOptions.map(h => {
+      const sel = habits.includes(h);
+      return { label: h, toggle: () => p.toggleHabit(h), style: sel ? 'background:var(--color-accent-800);color:var(--color-accent-100);border:1px solid var(--color-accent);' : 'background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-divider);' };
+    });
+
+    const catChipData = categories.map(c => {
+      const sel = s.formCategory === c;
+      return { label: c, select: () => this.setField('formCategory', c), style: sel ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);' };
+    });
+    const membersChipData = members.map(m => {
+      const sel = s.formMembers.includes(m.id);
+      return { name: m.name, select: () => this.toggleFormMember(m.id), style: sel ? 'background:var(--color-accent-800);color:var(--color-accent-100);box-shadow:inset 0 0 0 1px var(--color-accent);' : 'background:var(--color-surface);color:var(--color-neutral-400);' };
+    });
+
+    const suggestMember = members.find(m => s.formMembers.includes(m.id)) || null;
+    let ageSuggestions = [];
+    let ageSuggestLabel = '';
+    if (suggestMember) {
+      const bracket = ageGroup(suggestMember.age);
+      ageSuggestLabel = suggestMember.name + ' \u2014 ' + (BRACKET_LABEL[bracket] || '');
+      const pool = (AGE_TASKS[bracket] || []).concat(TRANSVERSAL_TASKS.filter(t => (suggestMember.age || 0) >= t.minAge));
+      ageSuggestions = pool.map(item => ({
+        label: item.title,
+        add: () => this.setState(s2 => {
+          const rows = s2.taskRows.slice();
+          const emptyIdx = rows.findIndex(r => !r.title.trim());
+          if (emptyIdx >= 0) rows[emptyIdx] = { ...rows[emptyIdx], title: item.title };
+          else rows.push({ title: item.title, day: '', time: '', locked: false, duration: 30, priority: 'medium', deadline: '' });
+          return { taskRows: rows, formCategory: item.category };
+        }),
+      }));
+    }
+
+    const rows = s.taskRows.map((row, i) => {
+      const dayChips = DAYS7.map(d => ({
+        label: d, select: () => this.setRowDay(i, d),
+        style: row.day === d ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);',
+      }));
+      const durationChips = DURATIONS.map(d => ({
+        label: d + ' min', select: () => this.setRowField(i, 'duration', d),
+        style: row.duration === d ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);',
+      }));
+      const priorityChips = ['high', 'medium', 'low'].map(pr => ({
+        label: PRIORITY_LABEL[pr], select: () => this.setRowField(i, 'priority', pr),
+        style: row.priority === pr ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);',
+      }));
+      const deadlineChips = [{ label: 'Aucune', val: '' }, ...DAYS7.map(d => ({ label: d, val: d }))].map(dl => ({
+        label: dl.label, select: () => this.setRowField(i, 'deadline', dl.val),
+        style: row.deadline === dl.val ? 'background:var(--color-accent-800);color:var(--color-accent-100);' : 'background:var(--color-surface);color:var(--color-neutral-400);',
+      }));
+      const hasTag = !!row.day;
+      const tagClass = row.locked ? 'tag-neutral' : 'tag-accent';
+      const tagLabel = row.locked ? 'Ancrée' : 'Modifiable';
+      return {
+        title: row.title, onTitleChange: e => this.setRowField(i, 'title', e.target.value),
+        canRemove: s.taskRows.length > 1, remove: () => this.removeRow(i),
+        dayChips, time: row.time, onTimeChange: e => this.setRowTime(i, e.target.value),
+        hasTag, tagClass, tagLabel, durationChips, priorityChips, deadlineChips,
+      };
+    });
+
+    const memberRows = members.map(m => {
+      const tt = tint[m.tint];
+      return { ...m, avatarBg: tt.bg, avatarFg: tt.fg };
+    });
+
+    // Replan screen
+    const flexTasks = tasks.filter(t => t.flexible && !s.replanDismissed[t.id]);
+    const proposals = flexTasks.map(t => {
+      const memberIds = t.members || [];
+      const cands = getProposals(t, tasks, constraints, memberIds);
+      const selIdx = s.replanSelected[t.id] || 0;
+      const sel = cands[selIdx] || cands[0];
+      if (!sel) return null;
+      const alts = cands.map((c, idx) => ({ c, idx })).filter(x => x.idx !== selIdx).map(x => ({
+        label: x.c.day + ' ' + x.c.time, choose: () => this.setState(s2 => ({ replanSelected: { ...s2.replanSelected, [t.id]: x.idx } })),
+      }));
+      return {
+        id: t.id, title: t.title, current: t.day + ' ' + t.time,
+        selDay: sel.day, selTime: sel.time, selReasonShort: sel.reasons[0], selReasons: sel.reasons,
+        hasAlts: alts.length > 0, alts,
+        expanded: !!s.replanExpanded[t.id], detailLabel: s.replanExpanded[t.id] ? 'Masquer le détail' : 'Voir le détail',
+        toggleDetail: () => this.setState(s2 => ({ replanExpanded: { ...s2.replanExpanded, [t.id]: !s2.replanExpanded[t.id] } })),
+        accept: () => {
+          p.updateTask(t.id, { day: sel.day, time: sel.time });
+          this.setState(s2 => ({ replanDismissed: { ...s2.replanDismissed, [t.id]: true } }));
+          this.showToast('Créneau appliqué : ' + sel.day + ' ' + sel.time + '.');
+        },
+        ignore: () => this.setState(s2 => ({ replanDismissed: { ...s2.replanDismissed, [t.id]: true } })),
+      };
+    }).filter(Boolean);
+
+    const showTabBar = ['home', 'search', 'notifications', 'profile'].includes(screen);
+    const showTopBar = screen === 'detail' || screen === 'create' || screen === 'replan' || screen === 'share';
+    const isDetail = screen === 'detail';
+    const isCreate = screen === 'create';
+    const isReplan = screen === 'replan';
+    const nonEmptyRows = s.taskRows.filter(r => r.title.trim()).length;
+    const isShare = screen === 'share';
+    const editingTask = p.editingTaskId ? tasks.find(t => t.id === p.editingTaskId) : null;
+    let topBarTitle;
+    if (isCreate) {
+      if (editingTask) topBarTitle = editingTask.recurring ? 'Modifier la tâche' : 'Modifier l\u2019événement';
+      else if (s.formRecurring) topBarTitle = nonEmptyRows > 1 ? 'Nouvelles tâches' : 'Nouvelle tâche';
+      else topBarTitle = nonEmptyRows > 1 ? 'Nouveaux événements' : 'Nouvel événement';
+    } else if (isReplan) topBarTitle = 'Replanifier ma semaine';
+    else if (isShare) topBarTitle = 'Partager le planning';
+    else topBarTitle = detailTask ? detailTask.category : '';
+    const colorFor = key => screen === key ? 'var(--color-accent-300)' : 'var(--color-neutral-500)';
+    const canSave = s.taskRows.some(r => r.title.trim());
+    const sharedWithRows = (p.sharedWith || []).map((per, i) => ({ ...per, remove: () => p.removeSharedPerson(i) }));
+    const hasCalendar = !!p.calendarConnected;
+    const calendarLabel = CALENDAR_LABEL[p.calendarConnected] || '';
+    const calendarProviders = Object.keys(CALENDAR_LABEL).map(key => ({ label: CALENDAR_LABEL[key], connect: () => p.connectCalendar(key) }));
+
+    return {
+      hasCalendar, noCalendar: !hasCalendar, calendarLabel, calendarEmail: p.calendarEmail, calendarProviders,
+      disconnectCalendar: p.disconnectCalendar,
+      formSynced: s.formSynced, toggleSynced: () => this.setField('formSynced', !s.formSynced),
+      toggleDetailSync: () => { if (detailTask) p.updateTask(detailTask.id, { synced: !detailTask.synced }); },
+      topPad, showTopBar, isDetail, isCreate, isReplan, topBarTitle, toastMsg: s.toastMsg,
+      isOb1: screen === 'onboarding1', isOb2: screen === 'onboarding2', isOb3: screen === 'onboarding3', isOb4: screen === 'onboarding4',
+      isHome: screen === 'home', isSearch: screen === 'search',
+      isProfile: screen === 'profile', isNotifications: screen === 'notifications',
+      goBack: p.goBack, goOnboarding2: () => p.goTo('onboarding2'), goOnboarding3: () => p.goTo('onboarding3'),
+      enableNotifs: () => { p.setNotifOptIn(true); p.goTo('onboarding4'); },
+      laterNotifs: () => { p.setNotifOptIn(false); p.goTo('onboarding4'); },
+      finishOnboarding: () => p.goTo('home'),
+      sleepStart: constraints.sleepStart, sleepEnd: constraints.sleepEnd,
+      lunchStart: constraints.lunchStart, lunchEnd: constraints.lunchEnd,
+      dndStart: constraints.dndStart, dndEnd: constraints.dndEnd,
+      onSleepStart: e => p.setConstraint('sleepStart', e.target.value), onSleepEnd: e => p.setConstraint('sleepEnd', e.target.value),
+      onLunchStart: e => p.setConstraint('lunchStart', e.target.value), onLunchEnd: e => p.setConstraint('lunchEnd', e.target.value),
+      onDndStart: e => p.setConstraint('dndStart', e.target.value), onDndEnd: e => p.setConstraint('dndEnd', e.target.value),
+      habitChipData,
+      weekDays, dayHeading, dayCountLabel: dayTaskCards.length + (dayTaskCards.length === 1 ? ' tâche' : ' tâches'),
+      homeLoading: s.homeLoading, homeReady: !s.homeLoading,
+      dayTaskCards, hasDayTasks: dayTaskCards.length > 0, hasNoDayTasks: dayTaskCards.length === 0,
+      openProfile: () => p.goTo('profile'), openCreate: () => p.goTo('create', {}), openReplan: () => p.goTo('replan'),
+      searchQuery: s.searchQuery, onSearchChange: e => this.setField('searchQuery', e.target.value),
+      filterChipData, showSuggestions, suggestionItems,
+      hasNoResults: !showSuggestions && searchResults.length === 0, hasResults: !showSuggestions && searchResults.length > 0,
+      searchResults,
+      hasDetailTask: !!detailTask, detailTask, hasNotes: !!(detailTask && detailTask.notes),
+      editTask: () => detailTask && p.goTo('create', { editingTaskId: detailTask.id }),
+      deleteTask: () => { if (detailTask) { p.deleteTask(detailTask.id); p.goBack(); } },
+      rows, addRow: this.addRow, chooseForMe: this.chooseForMe,
+      hasAgeSuggestions: ageSuggestions.length > 0, ageSuggestions, ageSuggestLabel,
+      saveLabel: nonEmptyRows > 1 ? 'Enregistrer les tâches' : 'Enregistrer',
+      formRecurring: s.formRecurring, toggleRecurring: () => this.setField('formRecurring', !s.formRecurring),
+      formNotes: s.formNotes, onNotesChange: e => this.setField('formNotes', e.target.value),
+      catChipData, membersChipData,
+      notCanSave: !canSave, saveTask: this.saveTask,
+      memberRows,
+      proposals, hasProposals: proposals.length > 0, noProposals: proposals.length === 0,
+      hasNotifToday: notifToday.length > 0, hasNotifWeek: notifWeek.length > 0, noNotifs: notifications.length === 0,
+      notifToday, notifWeek, hasUnread, markAllRead: p.markAllRead,
+      showTabBar,
+      isShare, openShare: () => p.goTo('share'),
+      shareLink: p.shareLink, copyLink: () => { try { navigator.clipboard.writeText(p.shareLink); } catch (e) {} this.showToast('Lien copié.'); },
+      sharedWithRows, hasSharedWith: sharedWithRows.length > 0,
+      newSharedName: s.newSharedName, onNewSharedNameChange: e => this.setField('newSharedName', e.target.value),
+      inviteSharedPerson: () => { if (s.newSharedName.trim()) { p.addSharedPerson(s.newSharedName.trim()); this.setField('newSharedName', ''); } },
+      openHome: () => p.goTo('home'), openSearch: () => p.goTo('search'), openNotifications: () => p.goTo('notifications'),
+      homeColor: colorFor('home'), searchColor: colorFor('search'), notifColor: colorFor('notifications'), profileColor: colorFor('profile'),
+    };
+  }
+}
+</script>
+</body>
+</html>
