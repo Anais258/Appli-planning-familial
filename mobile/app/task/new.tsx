@@ -22,7 +22,8 @@ const PRIORITIES: { key: Priority; label: string }[] = [
 ];
 
 export default function TaskFormScreen() {
-  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const { edit, title: prefillTitle, category: prefillCategory, recurring: prefillRecurring, duration: prefillDuration, member: prefillMember } =
+    useLocalSearchParams<{ edit?: string; title?: string; category?: string; recurring?: string; duration?: string; member?: string }>();
   const { data: tasks = [] } = useTasks();
   const { data: members = [] } = useMembers();
   const createTask = useCreateTask();
@@ -30,16 +31,16 @@ export default function TaskFormScreen() {
 
   const existing: Task | undefined = useMemo(() => tasks.find((t) => t.id === edit), [tasks, edit]);
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<Category>("Maison");
+  const [title, setTitle] = useState(prefillTitle ?? "");
+  const [category, setCategory] = useState<Category>((prefillCategory as Category) ?? "Maison");
   const [weekday, setWeekday] = useState<Weekday>(0);
   const [time, setTime] = useState("08:00");
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(prefillDuration ? Number(prefillDuration) : 30);
   const [priority, setPriority] = useState<Priority>("medium");
   const [deadlineWeekday, setDeadlineWeekday] = useState<Weekday | null>(null);
-  const [recurring, setRecurring] = useState(false);
+  const [recurring, setRecurring] = useState(prefillRecurring === "1");
   const [flexible, setFlexible] = useState(false);
-  const [memberIds, setMemberIds] = useState<string[]>([]);
+  const [memberIds, setMemberIds] = useState<string[]>(prefillMember ? [prefillMember] : []);
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
