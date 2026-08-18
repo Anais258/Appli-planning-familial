@@ -73,7 +73,14 @@ export default function ProfileScreen() {
           {members.map((m, i) => (
             <View key={m.id} style={{ flexDirection: "row", alignItems: "center", gap: space[2], paddingVertical: 6, borderTopWidth: i > 0 ? 1 : 0, borderTopColor: color.divider }}>
               <Avatar initials={m.initials} bg={m.tint === "neutral" ? color.neutral700 : color.accent800} fg={m.tint === "neutral" ? color.neutral100 : color.accent100} size={30} />
-              <Text size={14}>{m.name}</Text>
+              <Text size={14} style={{ flex: 1 }}>
+                {m.name}
+              </Text>
+              {m.age != null && (
+                <Text size={12} tone="faint" mono>
+                  {m.age} ans
+                </Text>
+              )}
             </View>
           ))}
         </Card>
@@ -111,6 +118,15 @@ export default function ProfileScreen() {
           })}
         </Card>
       </View>
+
+      <Pressable onPress={() => router.push("/suggestions")}>
+        <Card row style={{ alignItems: "center" }}>
+          <Text size={14} style={{ flex: 1 }}>
+            Suggestions de tâches selon l'âge
+          </Text>
+          <ChevronRightIcon size={14} color={color.neutral500} />
+        </Card>
+      </Pressable>
 
       <Pressable onPress={() => router.push("/share")}>
         <Card row style={{ alignItems: "center" }}>
