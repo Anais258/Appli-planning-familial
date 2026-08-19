@@ -17,7 +17,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
       - name: Install dependencies
         working-directory: mobile
-        run: npm install
+        run: npm install --legacy-peer-deps
       - name: Build Android APK (preview)
         working-directory: mobile
-        run: npm install --legacy-peer-deps
+        run: eas build --platform android --profile preview --non-interactive
