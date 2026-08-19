@@ -53,13 +53,13 @@ async function authRequest(path: string, body: unknown) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-  } catch (e) {
-    throw new Error(`Impossible de joindre ${API_URL}${path}: ${e instanceof Error ? e.message : String(e)}`);
+  } catch {
+    throw new Error("Impossible de contacter le serveur. Vérifie ta connexion et réessaie.");
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error ?? "Une erreur est survenue");
   if (typeof data.accessToken !== "string" || typeof data.refreshToken !== "string" || !data.user) {
-    throw new Error(`Réponse inattendue de ${API_URL}${path} (statut ${res.status}): ${JSON.stringify(data)}`);
+    throw new Error("Le serveur met parfois quelques secondes à se réveiller. Réessaie dans un instant.");
   }
   return data as { user: User; accessToken: string; refreshToken: string };
 }
