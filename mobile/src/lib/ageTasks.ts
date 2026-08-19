@@ -82,10 +82,10 @@ export const AGE_BRACKETS: AgeBracket[] = [
     ],
   },
   {
-    key: "13+",
-    label: "13 ans et +",
+    key: "13-17",
+    label: "13-17 ans",
     min: 13,
-    max: 120,
+    max: 17,
     tasks: [
       { title: "Faire une lessive complète", category: "Maison", recurring: true, duration: 15 },
       { title: "Faire les courses (liste donnée)", category: "Maison", recurring: true, duration: 45 },
