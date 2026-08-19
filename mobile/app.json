@@ -2,6 +2,7 @@
   "expo": {
     "name": "Passerelle",
     "slug": "passerelle",
+    "owner": "siquanes-team",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "passerelle",
