@@ -33,7 +33,7 @@ export default function TaskFormScreen() {
 
   const [title, setTitle] = useState(prefillTitle ?? "");
   const [category, setCategory] = useState<Category>((prefillCategory as Category) ?? "Maison");
-  const [weekday, setWeekday] = useState<Weekday>(0);
+  const [weekdays, setWeekdays] = useState<Weekday[]>([]);
   const [time, setTime] = useState("08:00");
   const [duration, setDuration] = useState(prefillDuration ? Number(prefillDuration) : 30);
   const [priority, setPriority] = useState<Priority>("medium");
@@ -47,7 +47,7 @@ export default function TaskFormScreen() {
     if (!existing) return;
     setTitle(existing.title);
     setCategory(existing.category);
-    setWeekday(existing.weekday);
+    setWeekdays([existing.weekday]);
     setTime(existing.time);
     setDuration(existing.duration);
     setPriority(existing.priority);
@@ -62,19 +62,34 @@ export default function TaskFormScreen() {
     setMemberIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
-  const isValid = title.trim().length > 0 && /^\d{2}:\d{2}$/.test(time);
+  // En édition une tâche ne peut avoir qu'un seul jour ; en création on peut
+  // en cocher plusieurs (ex. lundi + mercredi) — une tâche est créée par jour.
+  function toggleWeekday(w: Weekday) {
+    if (existing) {
+      setWeekdays([w]);
+    } else {
+      setWeekdays((prev) => (prev.includes(w) ? prev.filter((x) => x !== w) : [...prev, w]));
+    }
+  }
+
+  const isValid = title.trim().length > 0 && /^\d{2}:\d{2}$/.test(time) && weekdays.length > 0;
   const saving = createTask.isPending || updateTask.isPending;
 
-  function onSave() {
-    const payload = { title: title.trim(), category, weekday, time, duration, priority, deadlineWeekday, recurring, flexible, memberIds, notes };
-    const onDone = (verb: string) => () => {
-      useToastStore.getState().show(`Tâche ${verb}.`);
+  async function onSave() {
+    const base = { title: title.trim(), category, time, duration, priority, deadlineWeekday, recurring, flexible, memberIds, notes };
+    try {
+      if (existing) {
+        await updateTask.mutateAsync({ id: existing.id, data: { ...base, weekday: weekdays[0] } });
+        useToastStore.getState().show("Tâche modifiée.");
+      } else {
+        for (const weekday of weekdays) {
+          await createTask.mutateAsync({ ...base, weekday });
+        }
+        useToastStore.getState().show(weekdays.length > 1 ? "Tâches créées." : "Tâche créée.");
+      }
       router.back();
-    };
-    if (existing) {
-      updateTask.mutate({ id: existing.id, data: payload }, { onSuccess: onDone("modifiée") });
-    } else {
-      createTask.mutate(payload, { onSuccess: onDone("créée") });
+    } catch (e) {
+      useToastStore.getState().show(e instanceof Error ? e.message : "Une erreur est survenue.");
     }
   }
 
@@ -97,11 +112,11 @@ export default function TaskFormScreen() {
 
         <View style={{ gap: space[2] }}>
           <Text size={13} tone="muted">
-            Jour
+            Jour{!existing ? " (plusieurs possibles)" : ""}
           </Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space[2] }}>
             {WEEKDAYS_SHORT.map((label, i) => (
-              <Chip key={label} label={label} selected={weekday === i} onPress={() => setWeekday(i as Weekday)} size="sm" />
+              <Chip key={label} label={label} selected={weekdays.includes(i as Weekday)} onPress={() => toggleWeekday(i as Weekday)} size="sm" />
             ))}
           </View>
         </View>

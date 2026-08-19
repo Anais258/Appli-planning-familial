@@ -13,7 +13,7 @@ export default function NotificationsOnboardingScreen() {
 
   async function finish() {
     await complete();
-    router.replace("/(tabs)/home");
+    router.replace({ pathname: "/suggestions", params: { onboarding: "1" } });
   }
 
   return (

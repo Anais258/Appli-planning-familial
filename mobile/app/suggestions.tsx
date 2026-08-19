@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Screen } from "../src/components/Screen";
 import { Text } from "../src/components/Text";
 import { Card } from "../src/components/Card";
@@ -45,8 +45,11 @@ function AgeSetter({ member }: { member: Member }) {
 }
 
 export default function SuggestionsScreen() {
+  const { onboarding } = useLocalSearchParams<{ onboarding?: string }>();
+  const fromOnboarding = onboarding === "1";
   const { data: members = [] } = useMembers();
   const { data: tasks = [] } = useTasks();
+  const goHome = () => router.replace("/(tabs)/home");
 
   const withAge = members.filter((m): m is Member & { age: number } => m.age != null);
   const withoutAge = members.filter((m) => m.age == null);
@@ -60,7 +63,7 @@ export default function SuggestionsScreen() {
 
   return (
     <Screen scroll={false} padded={false}>
-      <TopBar title="Suggestions selon l'âge" onBack={() => router.back()} />
+      <TopBar title="Suggestions selon l'âge" onBack={fromOnboarding ? goHome : () => router.back()} />
       <ScrollView contentContainerStyle={{ padding: 18, gap: space[4] }} showsVerticalScrollIndicator={false}>
         <Text tone="muted" size={13}>
           Des tâches récurrentes courantes pour l'âge de chaque membre — appuie sur une suggestion pour la créer, tu choisiras ensuite le jour et l'heure.
@@ -144,6 +147,10 @@ export default function SuggestionsScreen() {
           Repères tirés de guides parentaux courants (Naître et grandir, GoHenry…) — à ajuster selon ta famille. Tranches disponibles :{" "}
           {AGE_BRACKETS.map((b) => b.label).join(", ")}.
         </Text>
+
+        {fromOnboarding && (
+          <Button label="Continuer vers l'accueil" variant="primary" block onPress={goHome} style={{ marginTop: space[2] }} />
+        )}
       </ScrollView>
     </Screen>
   );
