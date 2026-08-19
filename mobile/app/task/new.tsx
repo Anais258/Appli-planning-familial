@@ -72,7 +72,11 @@ export default function TaskFormScreen() {
     }
   }
 
-  const isValid = title.trim().length > 0 && /^\d{2}:\d{2}$/.test(time) && weekdays.length > 0;
+  const missing: string[] = [];
+  if (!title.trim()) missing.push("un titre");
+  if (weekdays.length === 0) missing.push("au moins un jour");
+  if (!/^\d{2}:\d{2}$/.test(time)) missing.push("une heure valide (HH:MM)");
+  const isValid = missing.length === 0;
   const saving = createTask.isPending || updateTask.isPending;
 
   async function onSave() {
@@ -176,6 +180,12 @@ export default function TaskFormScreen() {
         </View>
 
         <TextField label="Notes" value={notes} onChangeText={setNotes} multiline placeholder="Détails, lieu, contexte..." />
+
+        {!isValid && (
+          <Text tone="muted" size={12} center>
+            Pour {existing ? "enregistrer" : "créer la tâche"}, il manque : {missing.join(", ")}.
+          </Text>
+        )}
 
         <Button label={existing ? "Enregistrer" : "Créer la tâche"} variant="primary" block onPress={onSave} disabled={!isValid} loading={saving} />
       </ScrollView>
