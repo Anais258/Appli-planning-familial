@@ -46,15 +46,20 @@ async function persist(user: User, accessToken: string, refreshToken: string) {
 }
 
 async function authRequest(path: string, body: unknown) {
-  const res = await fetch(`${API_URL}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    throw new Error(`Impossible de joindre ${API_URL}${path}: ${e instanceof Error ? e.message : String(e)}`);
+  }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error ?? "Une erreur est survenue");
   if (typeof data.accessToken !== "string" || typeof data.refreshToken !== "string" || !data.user) {
-    throw new Error("Le serveur met parfois quelques secondes à se réveiller. Réessaie dans un instant.");
+    throw new Error(`Réponse inattendue de ${API_URL}${path} (statut ${res.status}): ${JSON.stringify(data)}`);
   }
   return data as { user: User; accessToken: string; refreshToken: string };
 }
