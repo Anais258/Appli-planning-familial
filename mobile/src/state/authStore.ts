@@ -53,6 +53,9 @@ async function authRequest(path: string, body: unknown) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error ?? "Une erreur est survenue");
+  if (typeof data.accessToken !== "string" || typeof data.refreshToken !== "string" || !data.user) {
+    throw new Error("Le serveur met parfois quelques secondes à se réveiller. Réessaie dans un instant.");
+  }
   return data as { user: User; accessToken: string; refreshToken: string };
 }
 
