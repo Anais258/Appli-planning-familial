@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { calendarApi, constraintsApi, membersApi, notificationsApi, shareApi, tasksApi } from "../api/resources";
-import type { TaskInput, Tint } from "../api/types";
+import type { Priority, TaskInput, Tint, Weekday } from "../api/types";
 import { useAuthStore } from "../state/authStore";
 
 function useEnabled() {
@@ -63,6 +63,12 @@ export function useDeleteTask() {
   return useMutation({
     mutationFn: (id: string) => tasksApi.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}
+
+export function useAutoSlotTask() {
+  return useMutation({
+    mutationFn: (data: { priority: Priority; deadlineWeekday: Weekday | null; memberIds: string[] }) => tasksApi.autoSlot(data),
   });
 }
 

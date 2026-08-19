@@ -7,7 +7,7 @@ import { TextField } from "../../src/components/TextField";
 import { Chip } from "../../src/components/Chip";
 import { Button } from "../../src/components/Button";
 import { TopBar } from "../../src/components/TopBar";
-import { useCreateTask, useMembers, useTasks, useUpdateTask } from "../../src/hooks/useApi";
+import { useAutoSlotTask, useCreateTask, useMembers, useTasks, useUpdateTask } from "../../src/hooks/useApi";
 import { useToastStore } from "../../src/state/toastStore";
 import { space } from "../../src/theme/tokens";
 import { WEEKDAYS_SHORT } from "../../src/lib/weekdays";
@@ -28,6 +28,7 @@ export default function TaskFormScreen() {
   const { data: members = [] } = useMembers();
   const createTask = useCreateTask();
   const updateTask = useUpdateTask();
+  const autoSlotTask = useAutoSlotTask();
 
   const existing: Task | undefined = useMemo(() => tasks.find((t) => t.id === edit), [tasks, edit]);
 
@@ -72,22 +73,30 @@ export default function TaskFormScreen() {
     }
   }
 
+  // Aucun jour coché en création = on laisse Passerelle choisir le créneau
+  // (priorité, échéance, charge de la semaine...), donc l'heure saisie
+  // manuellement ne s'applique qu'au placement manuel.
+  const autoPlacement = !existing && weekdays.length === 0;
+
   const missing: string[] = [];
   if (!title.trim()) missing.push("un titre");
-  if (weekdays.length === 0) missing.push("au moins un jour");
-  if (!/^\d{2}:\d{2}$/.test(time)) missing.push("une heure valide (HH:MM)");
+  if (!autoPlacement && !/^\d{2}:\d{2}$/.test(time)) missing.push("une heure valide (HH:MM)");
   const isValid = missing.length === 0;
-  const saving = createTask.isPending || updateTask.isPending;
+  const saving = createTask.isPending || updateTask.isPending || autoSlotTask.isPending;
 
   async function onSave() {
-    const base = { title: title.trim(), category, time, duration, priority, deadlineWeekday, recurring, flexible, memberIds, notes };
+    const base = { title: title.trim(), category, duration, priority, deadlineWeekday, recurring, memberIds, notes };
     try {
       if (existing) {
-        await updateTask.mutateAsync({ id: existing.id, data: { ...base, weekday: weekdays[0] } });
+        await updateTask.mutateAsync({ id: existing.id, data: { ...base, time, flexible, weekday: weekdays[0] } });
         useToastStore.getState().show("Tâche modifiée.");
+      } else if (autoPlacement) {
+        const slot = await autoSlotTask.mutateAsync({ priority, deadlineWeekday, memberIds });
+        await createTask.mutateAsync({ ...base, time: slot.time, weekday: slot.weekday, flexible: true });
+        useToastStore.getState().show(`Tâche créée automatiquement — ${WEEKDAYS_SHORT[slot.weekday]} à ${slot.time}.`);
       } else {
         for (const weekday of weekdays) {
-          await createTask.mutateAsync({ ...base, weekday });
+          await createTask.mutateAsync({ ...base, time, weekday, flexible });
         }
         useToastStore.getState().show(weekdays.length > 1 ? "Tâches créées." : "Tâche créée.");
       }
@@ -116,16 +125,23 @@ export default function TaskFormScreen() {
 
         <View style={{ gap: space[2] }}>
           <Text size={13} tone="muted">
-            Jour{!existing ? " (plusieurs possibles)" : ""}
+            Jour{!existing ? " (plusieurs possibles, ou aucun)" : ""}
           </Text>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space[2] }}>
             {WEEKDAYS_SHORT.map((label, i) => (
               <Chip key={label} label={label} selected={weekdays.includes(i as Weekday)} onPress={() => toggleWeekday(i as Weekday)} size="sm" />
             ))}
           </View>
+          {autoPlacement && (
+            <Text tone="faint" size={12}>
+              Aucun jour choisi : Passerelle sélectionnera elle-même le meilleur créneau de la semaine selon la priorité, l'échéance et les tâches déjà planifiées.
+            </Text>
+          )}
         </View>
 
-        <TextField label="Heure (HH:MM)" value={time} onChangeText={setTime} placeholder="08:00" keyboardType="numbers-and-punctuation" />
+        {!autoPlacement && (
+          <TextField label="Heure (HH:MM)" value={time} onChangeText={setTime} placeholder="08:00" keyboardType="numbers-and-punctuation" />
+        )}
 
         <View style={{ gap: space[2] }}>
           <Text size={13} tone="muted">
@@ -176,7 +192,9 @@ export default function TaskFormScreen() {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space[2] }}>
           <Chip label="Récurrente" selected={recurring} onPress={() => setRecurring((v) => !v)} size="sm" />
-          <Chip label="Flexible (replanifiable)" selected={flexible} onPress={() => setFlexible((v) => !v)} size="sm" />
+          {!autoPlacement && (
+            <Chip label="Flexible (replanifiable)" selected={flexible} onPress={() => setFlexible((v) => !v)} size="sm" />
+          )}
         </View>
 
         <TextField label="Notes" value={notes} onChangeText={setNotes} multiline placeholder="Détails, lieu, contexte..." />

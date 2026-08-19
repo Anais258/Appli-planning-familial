@@ -144,6 +144,49 @@ tasksRouter.delete("/:id", async (req, res) => {
   res.status(204).end();
 });
 
+const autoSlotSchema = z.object({
+  priority: z.enum(["high", "medium", "low"]).default("medium"),
+  deadlineWeekday: z.number().int().min(0).max(6).nullable().optional(),
+  memberIds: z.array(z.string()).default([]),
+});
+
+// Called when a task is created with no day picked: reuses the same scoring
+// engine as "Replanifier ma semaine" to pick the single best slot up front,
+// against a draft task that doesn't exist in the DB yet.
+tasksRouter.post("/auto-slot", async (req, res) => {
+  const parsed = autoSlotSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0]?.message });
+  const d = parsed.data;
+
+  const [tasks, constraints] = await Promise.all([
+    prisma.task.findMany({ where: { userId: req.userId }, include }),
+    prisma.constraints.findUnique({ where: { userId: req.userId } }),
+  ]);
+  if (!constraints) return res.status(400).json({ error: "Constraints not set up" });
+
+  const schedulable: SchedulableTask[] = tasks.map((t) => ({
+    id: t.id,
+    weekday: t.weekday as Weekday,
+    time: t.time,
+    priority: t.priority as SchedulableTask["priority"],
+    deadlineWeekday: (t.deadlineWeekday ?? null) as Weekday | null,
+    memberIds: t.members.map((m) => m.memberId),
+  }));
+
+  const draft: SchedulableTask = {
+    id: "__draft__",
+    weekday: 0,
+    time: "09:00",
+    priority: d.priority,
+    deadlineWeekday: (d.deadlineWeekday ?? null) as Weekday | null,
+    memberIds: d.memberIds,
+  };
+
+  const [best] = getProposals(draft, schedulable, constraints, 1);
+  if (!best) return res.status(422).json({ error: "Aucun créneau disponible cette semaine." });
+  res.json({ weekday: best.weekday, time: best.time, reasons: best.reasons });
+});
+
 // "Replanifier ma semaine" — top-3 scored slot proposals for every flexible task.
 tasksRouter.get("/replan/proposals", async (req, res) => {
   const [tasks, constraints] = await Promise.all([

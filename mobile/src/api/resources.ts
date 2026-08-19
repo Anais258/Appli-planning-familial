@@ -1,14 +1,17 @@
 import { api } from "./client";
 import type {
+  AutoSlotResult,
   CalendarStatus,
   Constraints,
   Member,
   Notification,
+  Priority,
   ReplanProposal,
   SharedPerson,
   Task,
   TaskInput,
   Tint,
+  Weekday,
 } from "./types";
 
 export const membersApi = {
@@ -26,6 +29,8 @@ export const tasksApi = {
   update: (id: string, data: Partial<TaskInput>) => api.patch<{ task: Task }>(`/tasks/${id}`, data),
   remove: (id: string) => api.delete<void>(`/tasks/${id}`),
   replanProposals: () => api.get<{ proposals: ReplanProposal[] }>("/tasks/replan/proposals"),
+  autoSlot: (data: { priority: Priority; deadlineWeekday: Weekday | null; memberIds: string[] }) =>
+    api.post<AutoSlotResult>("/tasks/auto-slot", data),
 };
 
 export const constraintsApi = {

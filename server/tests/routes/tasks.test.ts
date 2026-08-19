@@ -64,6 +64,36 @@ describe("tasks CRUD", () => {
   });
 });
 
+describe("POST /tasks/auto-slot", () => {
+  it("scores a draft task and returns its best weekday/time, without persisting anything", async () => {
+    const { accessToken } = await signup(app);
+    const auth = authHeader(accessToken);
+
+    const res = await request(app).post("/tasks/auto-slot").set(auth).send({ priority: "high" });
+    expect(res.status).toBe(200);
+    expect(res.body.weekday).toBeGreaterThanOrEqual(0);
+    expect(res.body.weekday).toBeLessThanOrEqual(6);
+    expect(res.body.time).toMatch(/^\d{2}:\d{2}$/);
+    expect(res.body.reasons.length).toBeGreaterThan(0);
+
+    const list = await request(app).get("/tasks").set(auth);
+    expect(list.body.tasks).toHaveLength(0);
+  });
+
+  it("avoids conflicting with an existing task for the same member", async () => {
+    const { accessToken } = await signup(app);
+    const auth = authHeader(accessToken);
+    const member = await request(app).post("/members").set(auth).send({ name: "Léo" });
+    const memberId = member.body.member.id;
+
+    await request(app).post("/tasks").set(auth).send({ ...baseTask, weekday: 0, time: "08:00", memberIds: [memberId] });
+
+    const res = await request(app).post("/tasks/auto-slot").set(auth).send({ priority: "high", memberIds: [memberId] });
+    expect(res.status).toBe(200);
+    expect(res.body.weekday === 0 && res.body.time === "08:00").toBe(false);
+  });
+});
+
 describe("GET /tasks/replan/proposals", () => {
   it("returns proposals only for flexible tasks", async () => {
     // Signup already creates a default Constraints row for the user (see

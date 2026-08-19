@@ -63,6 +63,12 @@ export interface ReplanCandidate {
   reason: string;
 }
 
+export interface AutoSlotResult {
+  weekday: Weekday;
+  time: string;
+  reasons: string[];
+}
+
 export interface ReplanProposal {
   taskId: string;
   title: string;
