@@ -9,7 +9,7 @@ import { TopBar } from "../src/components/TopBar";
 import { TextField } from "../src/components/TextField";
 import { Avatar } from "../src/components/Avatar";
 import { useMembers, useTasks, useUpdateMember } from "../src/hooks/useApi";
-import { AGE_BRACKETS, bracketForAge } from "../src/lib/ageTasks";
+import { AGE_BRACKETS, bracketForAge, transversalTasksForAge } from "../src/lib/ageTasks";
 import { color, space } from "../src/theme/tokens";
 import type { Member } from "../src/api/types";
 
@@ -93,7 +93,11 @@ export default function SuggestionsScreen() {
           const existingTitles = new Set(
             tasks.filter((t) => t.memberIds.includes(member.id)).map((t) => t.title.toLowerCase())
           );
-          const suggestions = bracket?.tasks.filter((t) => !existingTitles.has(t.title.toLowerCase())) ?? [];
+          // Suggestions de la tranche d'âge (si le membre en a une) + celles
+          // valables à tout âge (repas, hygiène, sommeil...) — c'est ce qui
+          // couvre aussi les adultes 18-64 ans, sans tranche dédiée.
+          const combined = [...(bracket?.tasks ?? []), ...transversalTasksForAge(member.age)];
+          const suggestions = combined.filter((t) => !existingTitles.has(t.title.toLowerCase()));
 
           return (
             <View key={member.id} style={{ gap: space[2] }}>
@@ -112,18 +116,10 @@ export default function SuggestionsScreen() {
                 </Text>
               </View>
 
-              {!bracket && (
+              {suggestions.length === 0 && (
                 <Card>
                   <Text tone="muted" size={13}>
-                    Pas de suggestions pour cet âge.
-                  </Text>
-                </Card>
-              )}
-
-              {bracket && suggestions.length === 0 && (
-                <Card>
-                  <Text tone="muted" size={13}>
-                    Toutes les tâches suggérées pour {bracket.label} sont déjà dans le planning de {member.name}.
+                    Toutes les tâches suggérées pour {member.name} sont déjà dans le planning.
                   </Text>
                 </Card>
               )}
