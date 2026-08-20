@@ -29,7 +29,7 @@ export function CustomTabBar({ state, navigation }: BottomTabBarProps) {
       style={{
         flexDirection: "row",
         alignItems: "center",
-        paddingBottom: insets.bottom || 10,
+        paddingBottom: (insets.bottom || 10) + space[4],
         paddingTop: 10,
         paddingHorizontal: 18,
         borderTopWidth: 1,
