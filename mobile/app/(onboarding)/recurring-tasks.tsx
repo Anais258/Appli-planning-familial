@@ -11,6 +11,7 @@ import { StepDots } from "../../src/components/StepDots";
 import { TrashIcon, RecurringIcon } from "../../src/components/icons";
 import { useCreateTask } from "../../src/hooks/useApi";
 import { useToastStore } from "../../src/state/toastStore";
+import { confirmReminderPermission } from "../../src/lib/notifications";
 import { WEEKDAYS_SHORT } from "../../src/lib/weekdays";
 import { color, space } from "../../src/theme/tokens";
 import type { Category, Weekday } from "../../src/api/types";
@@ -152,7 +153,17 @@ export default function RecurringTasksOnboardingScreen() {
             </View>
           </View>
 
-          <Chip label="Rappel" selected={reminder} onPress={() => setReminder((v) => !v)} size="sm" style={{ alignSelf: "flex-start" }} />
+          <Chip
+            label="Rappel"
+            selected={reminder}
+            onPress={() => {
+              const next = !reminder;
+              setReminder(next);
+              if (next) confirmReminderPermission();
+            }}
+            size="sm"
+            style={{ alignSelf: "flex-start" }}
+          />
 
           <Button label="+ Ajouter une tâche récurrente" variant="secondary" block onPress={addDraft} disabled={!canAdd} />
         </View>

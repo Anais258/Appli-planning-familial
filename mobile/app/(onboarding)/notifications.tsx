@@ -6,12 +6,14 @@ import { Button } from "../../src/components/Button";
 import { StepDots } from "../../src/components/StepDots";
 import { BellIcon } from "../../src/components/icons";
 import { useOnboardingStore } from "../../src/state/onboardingStore";
+import { requestNotificationPermission } from "../../src/lib/notifications";
 import { color, space } from "../../src/theme/tokens";
 
 export default function NotificationsOnboardingScreen() {
   const complete = useOnboardingStore((s) => s.complete);
 
   async function finish() {
+    await requestNotificationPermission();
     await complete();
     router.replace({ pathname: "/suggestions", params: { onboarding: "1" } });
   }

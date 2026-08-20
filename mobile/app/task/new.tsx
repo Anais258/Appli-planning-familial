@@ -9,6 +9,7 @@ import { Button } from "../../src/components/Button";
 import { TopBar } from "../../src/components/TopBar";
 import { useAutoSlotTask, useCreateTask, useMembers, useTasks, useUpdateTask } from "../../src/hooks/useApi";
 import { useToastStore } from "../../src/state/toastStore";
+import { confirmReminderPermission } from "../../src/lib/notifications";
 import { space } from "../../src/theme/tokens";
 import { WEEKDAYS_SHORT } from "../../src/lib/weekdays";
 import type { Category, Priority, Task, Weekday } from "../../src/api/types";
@@ -194,7 +195,18 @@ export default function TaskFormScreen() {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space[2] }}>
           <Chip label="Récurrente" selected={recurring} onPress={() => setRecurring((v) => !v)} size="sm" />
-          {recurring && <Chip label="Rappel" selected={reminder} onPress={() => setReminder((v) => !v)} size="sm" />}
+          {recurring && (
+            <Chip
+              label="Rappel"
+              selected={reminder}
+              onPress={() => {
+                const next = !reminder;
+                setReminder(next);
+                if (next) confirmReminderPermission();
+              }}
+              size="sm"
+            />
+          )}
           {!autoPlacement && (
             <Chip label="Flexible (replanifiable)" selected={flexible} onPress={() => setFlexible((v) => !v)} size="sm" />
           )}
