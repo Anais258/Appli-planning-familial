@@ -84,6 +84,22 @@ export function ReshuffleIcon({ size = 15, color = "currentColor" }: IconProps) 
   );
 }
 
+// Circular-arrow "recurs every week" marker (↻), distinct from
+// ReshuffleIcon (crossed arrows = "replan"/swap slots).
+export function RecurringIcon({ size = 12, color = "currentColor" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18.7 3.5V7h-3.5M5.3 20.5V17h3.5"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function DeadlineIcon({ size = 16, color = "currentColor" }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

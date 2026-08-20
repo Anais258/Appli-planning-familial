@@ -6,7 +6,7 @@ import { Text } from "../../src/components/Text";
 import { Card } from "../../src/components/Card";
 import { Button } from "../../src/components/Button";
 import { Avatar } from "../../src/components/Avatar";
-import { CalendarIcon, ChevronRightIcon } from "../../src/components/icons";
+import { CalendarIcon, ChevronRightIcon, RecurringIcon } from "../../src/components/icons";
 import { useCalendarStatus, useDisconnectCalendar, useMembers } from "../../src/hooks/useApi";
 import { useAuthStore } from "../../src/state/authStore";
 import { useToastStore } from "../../src/state/toastStore";
@@ -118,6 +118,16 @@ export default function ProfileScreen() {
           })}
         </Card>
       </View>
+
+      <Pressable onPress={() => router.push("/recurring-tasks")}>
+        <Card row style={{ alignItems: "center" }}>
+          <RecurringIcon size={16} color={color.neutral400} />
+          <Text size={14} style={{ flex: 1, marginLeft: space[2] }}>
+            Tâches récurrentes
+          </Text>
+          <ChevronRightIcon size={14} color={color.neutral500} />
+        </Card>
+      </Pressable>
 
       <Pressable onPress={() => router.push("/suggestions")}>
         <Card row style={{ alignItems: "center" }}>

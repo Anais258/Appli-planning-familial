@@ -40,6 +40,7 @@ export default function TaskFormScreen() {
   const [priority, setPriority] = useState<Priority>("medium");
   const [deadlineWeekday, setDeadlineWeekday] = useState<Weekday | null>(null);
   const [recurring, setRecurring] = useState(prefillRecurring === "1");
+  const [reminder, setReminder] = useState(false);
   const [flexible, setFlexible] = useState(false);
   const [memberIds, setMemberIds] = useState<string[]>(prefillMember ? [prefillMember] : []);
   const [notes, setNotes] = useState("");
@@ -54,6 +55,7 @@ export default function TaskFormScreen() {
     setPriority(existing.priority);
     setDeadlineWeekday(existing.deadlineWeekday);
     setRecurring(existing.recurring);
+    setReminder(existing.reminder);
     setFlexible(existing.flexible);
     setMemberIds(existing.memberIds);
     setNotes(existing.notes);
@@ -85,7 +87,7 @@ export default function TaskFormScreen() {
   const saving = createTask.isPending || updateTask.isPending || autoSlotTask.isPending;
 
   async function onSave() {
-    const base = { title: title.trim(), category, duration, priority, deadlineWeekday, recurring, memberIds, notes };
+    const base = { title: title.trim(), category, duration, priority, deadlineWeekday, recurring, reminder, memberIds, notes };
     try {
       if (existing) {
         await updateTask.mutateAsync({ id: existing.id, data: { ...base, time, flexible, weekday: weekdays[0] } });
@@ -192,6 +194,7 @@ export default function TaskFormScreen() {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space[2] }}>
           <Chip label="Récurrente" selected={recurring} onPress={() => setRecurring((v) => !v)} size="sm" />
+          {recurring && <Chip label="Rappel" selected={reminder} onPress={() => setReminder((v) => !v)} size="sm" />}
           {!autoPlacement && (
             <Chip label="Flexible (replanifiable)" selected={flexible} onPress={() => setFlexible((v) => !v)} size="sm" />
           )}

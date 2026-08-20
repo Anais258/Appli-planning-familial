@@ -33,7 +33,7 @@ export default function ConstraintsOnboardingScreen() {
   function onContinue() {
     updateConstraints.mutate(
       { sleepStart, sleepEnd, lunchStart, lunchEnd, dndStart, dndEnd },
-      { onSuccess: () => router.push("/(onboarding)/notifications") }
+      { onSuccess: () => router.push("/(onboarding)/recurring-tasks") }
     );
   }
 
@@ -89,7 +89,7 @@ export default function ConstraintsOnboardingScreen() {
       </View>
 
       <View style={{ gap: space[4], alignItems: "center" }}>
-        <StepDots step={2} total={4} />
+        <StepDots step={2} total={5} />
         <Button label="Continuer" variant="primary" block onPress={onContinue} loading={updateConstraints.isPending} />
       </View>
     </Screen>

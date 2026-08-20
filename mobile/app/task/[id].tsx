@@ -58,6 +58,7 @@ export default function TaskDetailScreen() {
           <Tag label={task.category} variant={categoryTagVariant(task.category)} />
           {task.priority === "high" && <Tag label={priorityLabel(task.priority)} variant="outline" />}
           {task.recurring && <Tag label="Récurrente" variant="neutral" />}
+          {task.reminder && <Tag label="Rappel activé" variant="neutral" />}
           {task.flexible && <Tag label="Flexible" variant="neutral" />}
         </View>
 

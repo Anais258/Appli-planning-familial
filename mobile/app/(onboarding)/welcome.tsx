@@ -23,7 +23,7 @@ export default function WelcomeScreen() {
         </Text>
       </View>
       <View style={{ gap: space[4], alignItems: "center" }}>
-        <StepDots step={0} total={4} />
+        <StepDots step={0} total={5} />
         <Button label="Commencer" variant="primary" block onPress={() => router.push("/(onboarding)/members")} />
       </View>
     </Screen>

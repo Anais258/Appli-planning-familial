@@ -40,6 +40,18 @@ describe("tasks CRUD", () => {
     expect(listAfter.body.tasks).toHaveLength(0);
   });
 
+  it("persists the recurring and reminder flags", async () => {
+    const { accessToken } = await signup(app);
+    const auth = authHeader(accessToken);
+
+    const created = await request(app).post("/tasks").set(auth).send({ ...baseTask, recurring: true, reminder: true });
+    expect(created.status).toBe(201);
+    expect(created.body.task).toMatchObject({ recurring: true, reminder: true });
+
+    const patched = await request(app).patch(`/tasks/${created.body.task.id}`).set(auth).send({ reminder: false });
+    expect(patched.body.task).toMatchObject({ recurring: true, reminder: false });
+  });
+
   it("rejects an invalid payload", async () => {
     const { accessToken } = await signup(app);
     const res = await request(app)

@@ -73,7 +73,7 @@ export default function MembersOnboardingScreen() {
       </View>
 
       <View style={{ gap: space[4], alignItems: "center" }}>
-        <StepDots step={1} total={4} />
+        <StepDots step={1} total={5} />
         <Button label="Continuer" variant="primary" block onPress={() => router.push("/(onboarding)/constraints")} disabled={members.length === 0} />
       </View>
     </Screen>

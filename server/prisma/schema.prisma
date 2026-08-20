@@ -64,6 +64,7 @@ model Task {
   priority    String    @default("medium")
   deadlineWeekday Int?
   recurring   Boolean   @default(false)
+  reminder    Boolean   @default(false)
   flexible    Boolean   @default(false)
   synced      Boolean   @default(false)
   notes       String    @default("")

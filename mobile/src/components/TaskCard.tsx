@@ -4,7 +4,7 @@ import { Text } from "./Text";
 import { Card } from "./Card";
 import { Tag } from "./Tag";
 import { AvatarStack } from "./Avatar";
-import { ClockIcon } from "./icons";
+import { ClockIcon, RecurringIcon } from "./icons";
 import { color, space } from "../theme/tokens";
 import { categoryTagVariant, formatDuration } from "../lib/weekdays";
 import type { Member, Task } from "../api/types";
@@ -21,7 +21,13 @@ export function TaskCard({ task, members }: { task: Task; members: Member[] }) {
 
   return (
     <Pressable onPress={() => router.push(`/task/${task.id}`)}>
-      <Card row style={{ alignItems: "center" }}>
+      <Card
+        row
+        style={{
+          alignItems: "center",
+          ...(task.recurring ? { borderWidth: 1, borderStyle: "dashed", borderColor: color.accent700 } : null),
+        }}
+      >
         <View style={{ width: 52, gap: 3 }}>
           <Text mono size={13} weight="medium">
             {task.time}
@@ -35,9 +41,12 @@ export function TaskCard({ task, members }: { task: Task; members: Member[] }) {
         </View>
 
         <View style={{ flex: 1, gap: 4 }}>
-          <Text weight="medium" size={14} numberOfLines={1}>
-            {task.title}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            {task.recurring && <RecurringIcon size={11} color={color.accent400} />}
+            <Text weight="medium" size={14} numberOfLines={1} style={{ flexShrink: 1 }}>
+              {task.title}
+            </Text>
+          </View>
           <View style={{ flexDirection: "row", gap: space[2], alignItems: "center" }}>
             <Tag label={task.category} variant={categoryTagVariant(task.category)} />
             {task.priority === "high" && <Tag label="Priorité haute" variant="outline" />}

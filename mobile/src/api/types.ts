@@ -32,6 +32,7 @@ export interface Task {
   priority: Priority;
   deadlineWeekday: Weekday | null;
   recurring: boolean;
+  reminder: boolean;
   flexible: boolean;
   synced: boolean;
   notes: string;

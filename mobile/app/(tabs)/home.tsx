@@ -33,11 +33,8 @@ export default function HomeScreen() {
     <Screen techGrid refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={color.accent} />}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View>
-          <Text tone="muted" size={13}>
-            Bonjour
-          </Text>
           <Text heading weight="semibold" size={20}>
-            {user?.name?.split(" ")[0] ?? ""}
+            Salut, {user?.name?.split(" ")[0] ?? ""} 👋
           </Text>
         </View>
         <Avatar initials={user?.initials ?? ""} bg={color.accent800} fg={color.accent100} size={38} />

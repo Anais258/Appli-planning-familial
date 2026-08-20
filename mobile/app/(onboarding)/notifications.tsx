@@ -31,7 +31,7 @@ export default function NotificationsOnboardingScreen() {
         </Text>
       </View>
       <View style={{ gap: space[4], alignItems: "center", width: "100%" }}>
-        <StepDots step={3} total={4} />
+        <StepDots step={4} total={5} />
         <Button label="Terminer" variant="primary" block onPress={finish} />
       </View>
     </Screen>
