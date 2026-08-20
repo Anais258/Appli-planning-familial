@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { Screen } from "../../src/components/Screen";
 import { Text } from "../../src/components/Text";
 import { TextField } from "../../src/components/TextField";
+import { TimeField } from "../../src/components/TimeField";
 import { Chip } from "../../src/components/Chip";
 import { Card } from "../../src/components/Card";
 import { Button } from "../../src/components/Button";
@@ -140,7 +141,7 @@ export default function RecurringTasksOnboardingScreen() {
             </View>
           </View>
 
-          <TextField label="Heure (HH:MM)" value={time} onChangeText={setTime} placeholder="17:00" keyboardType="numbers-and-punctuation" />
+          <TimeField label="Heure" value={time} onChange={setTime} />
 
           <View style={{ gap: space[2] }}>
             <Text size={13} tone="muted">

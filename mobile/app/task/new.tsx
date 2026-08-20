@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Screen } from "../../src/components/Screen";
 import { Text } from "../../src/components/Text";
 import { TextField } from "../../src/components/TextField";
+import { TimeField } from "../../src/components/TimeField";
 import { Chip } from "../../src/components/Chip";
 import { Button } from "../../src/components/Button";
 import { TopBar } from "../../src/components/TopBar";
@@ -143,7 +144,7 @@ export default function TaskFormScreen() {
         </View>
 
         {!autoPlacement && (
-          <TextField label="Heure (HH:MM)" value={time} onChangeText={setTime} placeholder="08:00" keyboardType="numbers-and-punctuation" />
+          <TimeField label="Heure" value={time} onChange={setTime} />
         )}
 
         <View style={{ gap: space[2] }}>
