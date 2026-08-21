@@ -10,12 +10,13 @@ import { TopBar } from "../src/components/TopBar";
 import { TrashIcon } from "../src/components/icons";
 import { useInvitePerson, useRemoveSharedPerson, useShare } from "../src/hooks/useApi";
 import { useToastStore } from "../src/state/toastStore";
+import { API_URL } from "../src/api/client";
 import { color, space } from "../src/theme/tokens";
 
-// EXPO_PUBLIC_SHARE_URL should be set once a domain is secured for the app —
-// "passerelle.app" has not been verified/purchased, so this default is a
-// placeholder, not a real endpoint.
-const SHARE_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL ?? "https://passerelle.app/s";
+// EXPO_PUBLIC_SHARE_URL can override this once a nicer custom domain is
+// secured for the app; until then the link points at the real backend route
+// (GET /share/public/:token in server/src/routes/share.ts), which works.
+const SHARE_BASE_URL = process.env.EXPO_PUBLIC_SHARE_URL ?? `${API_URL}/share/public`;
 
 export default function ShareScreen() {
   const { data, isLoading } = useShare();
