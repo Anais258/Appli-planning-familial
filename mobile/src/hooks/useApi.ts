@@ -15,7 +15,7 @@ export function useMembers() {
 export function useCreateMember() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: { name: string; initials?: string; tint?: Tint; age?: number | null }) => membersApi.create(data),
+    mutationFn: (data: { name: string; initials?: string; tint?: Tint; age?: number | null; birthday?: string | null }) => membersApi.create(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["members"] }),
   });
 }
@@ -23,7 +23,7 @@ export function useCreateMember() {
 export function useUpdateMember() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<{ name: string; initials: string; tint: Tint; age: number | null }> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<{ name: string; initials: string; tint: Tint; age: number | null; birthday: string | null }> }) =>
       membersApi.update(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["members"] }),
   });

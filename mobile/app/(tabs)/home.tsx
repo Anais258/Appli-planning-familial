@@ -8,12 +8,15 @@ import { Button } from "../../src/components/Button";
 import { WeekStrip } from "../../src/components/WeekStrip";
 import { TaskCard } from "../../src/components/TaskCard";
 import { Avatar } from "../../src/components/Avatar";
-import { ReshuffleIcon, CalendarIcon } from "../../src/components/icons";
+import { ReshuffleIcon, CalendarIcon, GiftIcon } from "../../src/components/icons";
 import { useMembers, useTasks } from "../../src/hooks/useApi";
 import { useAuthStore } from "../../src/state/authStore";
 import { color, space } from "../../src/theme/tokens";
 import { todayWeekday, WEEKDAYS_FULL } from "../../src/lib/weekdays";
+import { daysUntilBirthday } from "../../src/lib/notifications";
 import type { Weekday } from "../../src/api/types";
+
+const BIRTHDAY_LOOKAHEAD_DAYS = 7;
 
 export default function HomeScreen() {
   const user = useAuthStore((s) => s.user);
@@ -29,6 +32,14 @@ export default function HomeScreen() {
 
   const flexibleCount = tasks.filter((t) => t.flexible).length;
 
+  const upcomingBirthday = useMemo(() => {
+    return members
+      .filter((m) => m.birthday)
+      .map((m) => ({ member: m, days: daysUntilBirthday(m.birthday!) }))
+      .filter((b) => b.days <= BIRTHDAY_LOOKAHEAD_DAYS)
+      .sort((a, b) => a.days - b.days)[0];
+  }, [members]);
+
   return (
     <Screen techGrid refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={color.accent} />}>
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -41,6 +52,18 @@ export default function HomeScreen() {
       </View>
 
       <WeekStrip selected={selected} onSelect={setSelected} today={today} />
+
+      {upcomingBirthday && (
+        <Card row style={{ alignItems: "center", backgroundColor: color.accent900 }}>
+          <GiftIcon size={16} color={color.accent200} />
+          <Text size={13} style={{ flex: 1, marginLeft: space[2] }}>
+            {upcomingBirthday.days === 0
+              ? `C'est l'anniversaire de ${upcomingBirthday.member.name} aujourd'hui 🎉`
+              : `Anniversaire de ${upcomingBirthday.member.name} dans ${upcomingBirthday.days} jour${upcomingBirthday.days > 1 ? "s" : ""}`}
+          </Text>
+          <Button label="Voir" variant="ghost" onPress={() => router.push("/birthdays")} />
+        </Card>
+      )}
 
       {flexibleCount > 0 && (
         <Card row style={{ alignItems: "center", backgroundColor: color.accent900 }}>

@@ -45,6 +45,7 @@ model FamilyMember {
   initials String
   tint     String  @default("neutral")
   age      Int?
+  birthday DateTime?
   order    Int     @default(0)
 
   tasks TaskMember[]

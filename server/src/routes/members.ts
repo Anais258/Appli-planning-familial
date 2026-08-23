@@ -16,6 +16,7 @@ const memberSchema = z.object({
   initials: z.string().min(1).max(3).optional(),
   tint: z.enum(["accent", "neutral", "accent2"]).default("neutral"),
   age: z.number().int().min(0).max(120).nullable().optional(),
+  birthday: z.coerce.date().nullable().optional(),
 });
 
 membersRouter.post("/", async (req, res) => {
@@ -29,6 +30,7 @@ membersRouter.post("/", async (req, res) => {
       initials: parsed.data.initials ?? parsed.data.name.slice(0, 2).toUpperCase(),
       tint: parsed.data.tint,
       age: parsed.data.age ?? null,
+      birthday: parsed.data.birthday ?? null,
       order: count,
     },
   });

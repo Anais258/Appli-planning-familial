@@ -152,6 +152,16 @@ export function CloseIcon({ size = 14, color = "currentColor" }: IconProps) {
   );
 }
 
+export function GiftIcon({ size = 16, color = "currentColor" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x="4" y="9" width="16" height="11" rx="1" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+      <Path d="M4 9h16v4H4z" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+      <Path d="M12 9v11M12 9c-1.5-3-5.5-3.5-5.5-.8C6.5 9.7 8.5 9 12 9zM12 9c1.5-3 5.5-3.5 5.5-.8 0 1.5-2 .8-5.5.8z" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function SearchEmptyIcon({ size = 26, color = "currentColor" }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

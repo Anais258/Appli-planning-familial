@@ -30,6 +30,17 @@ describe("members", () => {
     expect(listAfter.body.members).toHaveLength(1);
   });
 
+  it("stores and updates a member's birthday", async () => {
+    const { accessToken } = await signup(app);
+    const auth = authHeader(accessToken);
+
+    const created = await request(app).post("/members").set(auth).send({ name: "Léo", birthday: "2016-04-12" });
+    expect(created.body.member.birthday).toBe(new Date("2016-04-12").toISOString());
+
+    const cleared = await request(app).patch(`/members/${created.body.member.id}`).set(auth).send({ birthday: null });
+    expect(cleared.body.member.birthday).toBeNull();
+  });
+
   it("defaults initials to the first two letters of the name", async () => {
     const { accessToken } = await signup(app);
     const res = await request(app).post("/members").set(authHeader(accessToken)).send({ name: "zoe" });

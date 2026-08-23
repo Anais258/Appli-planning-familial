@@ -14,6 +14,7 @@ export interface Member {
   initials: string;
   tint: Tint;
   age: number | null;
+  birthday: string | null;
   order: number;
 }
 

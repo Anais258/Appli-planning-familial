@@ -1,15 +1,20 @@
 import { useEffect } from "react";
 import { Tabs } from "expo-router";
 import { CustomTabBar } from "../../src/components/CustomTabBar";
-import { useTasks } from "../../src/hooks/useApi";
-import { syncTaskReminders } from "../../src/lib/notifications";
+import { useMembers, useTasks } from "../../src/hooks/useApi";
+import { syncBirthdayReminders, syncTaskReminders } from "../../src/lib/notifications";
 
 export default function TabsLayout() {
   const { data: tasks } = useTasks();
+  const { data: members } = useMembers();
 
   useEffect(() => {
     if (tasks) syncTaskReminders(tasks);
   }, [tasks]);
+
+  useEffect(() => {
+    if (members) syncBirthdayReminders(members);
+  }, [members]);
 
   return (
     <Tabs tabBar={(props) => <CustomTabBar {...props} />} screenOptions={{ headerShown: false }}>

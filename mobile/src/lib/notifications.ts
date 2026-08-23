@@ -1,10 +1,37 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { useToastStore } from "../state/toastStore";
-import type { Task, Weekday } from "../api/types";
+import type { Member, Task, Weekday } from "../api/types";
 
 // How long before a recurring task's time its reminder fires.
 const REMINDER_LEAD_MINUTES = 10;
+
+// Local notifications don't support a native yearly trigger we can rely on
+// across Expo/OS versions, so birthdays use a one-shot DATE trigger for the
+// next occurrence — syncBirthdayReminders recomputes and reschedules it
+// every time it runs (app open, member list change), so it's always
+// pointing at the next upcoming date.
+const BIRTHDAY_NOTIFICATION_HOUR = 9;
+const BIRTHDAY_ID_PREFIX = "birthday:";
+
+// Next occurrence (this year if still upcoming today, else next year) of a
+// birthday's month/day, at BIRTHDAY_NOTIFICATION_HOUR local time.
+export function nextBirthdayOccurrence(birthday: string, from: Date = new Date()): Date {
+  const b = new Date(birthday);
+  const today = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  let next = new Date(from.getFullYear(), b.getMonth(), b.getDate(), BIRTHDAY_NOTIFICATION_HOUR, 0, 0, 0);
+  if (next < today) {
+    next = new Date(from.getFullYear() + 1, b.getMonth(), b.getDate(), BIRTHDAY_NOTIFICATION_HOUR, 0, 0, 0);
+  }
+  return next;
+}
+
+export function daysUntilBirthday(birthday: string, from: Date = new Date()): number {
+  const today = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const next = nextBirthdayOccurrence(birthday, from);
+  const nextDay = new Date(next.getFullYear(), next.getMonth(), next.getDate());
+  return Math.round((nextDay.getTime() - today.getTime()) / 86_400_000);
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -86,6 +113,37 @@ export async function syncTaskReminders(tasks: Task[]): Promise<void> {
         identifier: task.id,
         content: { title: "Rappel Passerelle", body: `${task.title} à ${task.time}` },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: toExpoWeekday(weekday), hour, minute },
+      });
+    })
+  );
+}
+
+// Reconciles scheduled birthday reminders against members that have a
+// birthday set. Identifiers are prefixed to avoid colliding with task
+// reminder ids (both use the same notification store).
+export async function syncBirthdayReminders(members: Member[]): Promise<void> {
+  if (Platform.OS === "web") return;
+  if (!(await hasNotificationPermission())) return;
+
+  const withBirthday = members.filter((m): m is Member & { birthday: string } => !!m.birthday);
+  const desiredIds = new Set(withBirthday.map((m) => `${BIRTHDAY_ID_PREFIX}${m.id}`));
+
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  await Promise.all(
+    scheduled
+      .filter((req) => req.identifier?.startsWith(BIRTHDAY_ID_PREFIX) && !desiredIds.has(req.identifier))
+      .map((req) => Notifications.cancelScheduledNotificationAsync(req.identifier))
+  );
+
+  await Promise.all(
+    withBirthday.map(async (member) => {
+      const identifier = `${BIRTHDAY_ID_PREFIX}${member.id}`;
+      const date = nextBirthdayOccurrence(member.birthday);
+      await Notifications.cancelScheduledNotificationAsync(identifier).catch(() => {});
+      await Notifications.scheduleNotificationAsync({
+        identifier,
+        content: { title: "🎂 Anniversaire", body: `C'est l'anniversaire de ${member.name} aujourd'hui !` },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
       });
     })
   );
