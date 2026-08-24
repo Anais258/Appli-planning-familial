@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { calendarApi, constraintsApi, membersApi, notificationsApi, shareApi, tasksApi } from "../api/resources";
-import type { Priority, TaskInput, Tint, Weekday } from "../api/types";
+import { calendarApi, constraintsApi, membersApi, notificationsApi, recipesApi, shareApi, tasksApi } from "../api/resources";
+import type { Priority, RecipeInput, TaskInput, Tint, Weekday } from "../api/types";
 import { useAuthStore } from "../state/authStore";
 
 function useEnabled() {
@@ -34,6 +34,35 @@ export function useDeleteMember() {
   return useMutation({
     mutationFn: (id: string) => membersApi.remove(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["members"] }),
+  });
+}
+
+export function useRecipes() {
+  const enabled = useEnabled();
+  return useQuery({ queryKey: ["recipes"], queryFn: () => recipesApi.list().then((r) => r.recipes), enabled });
+}
+
+export function useCreateRecipe() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: RecipeInput) => recipesApi.create(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["recipes"] }),
+  });
+}
+
+export function useUpdateRecipe() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<RecipeInput> }) => recipesApi.update(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["recipes"] }),
+  });
+}
+
+export function useDeleteRecipe() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => recipesApi.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["recipes"] }),
   });
 }
 

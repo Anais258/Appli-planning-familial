@@ -162,6 +162,21 @@ export function GiftIcon({ size = 16, color = "currentColor" }: IconProps) {
   );
 }
 
+export function BookIcon({ size = 16, color = "currentColor" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M5 4.5C5 3.7 5.7 3 6.5 3H19v15.5H6.5c-.8 0-1.5.7-1.5 1.5V4.5z"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Path d="M5 18v1.5c0 .8.7 1.5 1.5 1.5H19" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
 export function SearchEmptyIcon({ size = 26, color = "currentColor" }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

@@ -8,6 +8,7 @@ import { constraintsRouter } from "./routes/constraints";
 import { notificationsRouter } from "./routes/notifications";
 import { shareRouter } from "./routes/share";
 import { calendarRouter } from "./routes/calendar";
+import { recipesRouter } from "./routes/recipes";
 
 export const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ app.use("/constraints", constraintsRouter);
 app.use("/notifications", notificationsRouter);
 app.use("/share", shareRouter);
 app.use("/calendar", calendarRouter);
+app.use("/recipes", recipesRouter);
 
 app.use((req, res) => res.status(404).json({ error: `No route for ${req.method} ${req.path}` }));
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

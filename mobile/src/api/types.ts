@@ -99,6 +99,25 @@ export interface CalendarConnection {
   email: string | null;
 }
 
+export interface Recipe {
+  id: string;
+  title: string;
+  ingredients: string[];
+  steps: string[];
+  notes: string;
+  memberIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type RecipeInput = {
+  title: string;
+  ingredients?: string[];
+  steps?: string[];
+  notes?: string;
+  memberIds?: string[];
+};
+
 export interface CalendarStatus {
   connections: CalendarConnection[];
   googleConfigured: boolean;

@@ -6,6 +6,8 @@ import type {
   Member,
   Notification,
   Priority,
+  Recipe,
+  RecipeInput,
   ReplanProposal,
   SharedPerson,
   Task,
@@ -31,6 +33,13 @@ export const tasksApi = {
   replanProposals: () => api.get<{ proposals: ReplanProposal[] }>("/tasks/replan/proposals"),
   autoSlot: (data: { priority: Priority; deadlineWeekday: Weekday | null; memberIds: string[] }) =>
     api.post<AutoSlotResult>("/tasks/auto-slot", data),
+};
+
+export const recipesApi = {
+  list: () => api.get<{ recipes: Recipe[] }>("/recipes"),
+  create: (data: RecipeInput) => api.post<{ recipe: Recipe }>("/recipes", data),
+  update: (id: string, data: Partial<RecipeInput>) => api.patch<{ recipe: Recipe }>(`/recipes/${id}`, data),
+  remove: (id: string) => api.delete<void>(`/recipes/${id}`),
 };
 
 export const constraintsApi = {
